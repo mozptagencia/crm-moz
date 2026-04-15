@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html lang="pt">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Moz · CRM</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<link href="assets/css/crm.css" rel="stylesheet"/>
+</head>
+<body class="crm-page">
+<!-- ═══ HEADER ═══════════════════════════════════════════════════ -->
+<header class="crm-header">
+<div>
+<div class="crm-header__logo">m<span>o</span>z</div>
+<div class="crm-header__title">CRM · Gestão Comercial</div>
+</div>
+<div class="crm-header__actions">
+<button class="btn btn--secondary" id="btn-export-csv">↓ Exportar CSV</button>
+<button class="btn btn--primary" data-modal-open="modal-lead">+ Novo Lead</button>
+</div>
+</header>
+<!-- ═══ USER BAR ══════════════════════════════════════════════════ -->
+<div class="user-bar bg-ink">
+<div class="user-bar__info">
+<div class="user-avatar" id="user-avatar">—</div>
+<div>
+<span class="user-bar__name" id="user-name">—</span>
+<span class="user-bar__role" id="user-role"></span>
+</div>
+</div>
+<nav class="u-flex-center">
+<a class="crm-tab-link nav-link" data-tab="leads" href="#">
+      Leads
+    </a>
+<a class="crm-tab-link nav-link" data-tab="io" href="#">
+      Importar / Exportar
+    </a>
+<a class="crm-tab-link nav-link" data-tab="settings" href="#">
+      ⚙ Configurações
+    </a>
+</nav>
+<div>
+<button class="btn-logout" id="btn-logout">Sair →</button>
+</div>
+</div>
+<!-- ═══ STATS ════════════════════════════════════════════════════ -->
+<div class="crm-stats">
+<div class="crm-stat"><div class="crm-stat__val crm-stat__val--teal" id="stat-total">0</div><div class="crm-stat__label">Total Leads</div></div>
+<div class="crm-stat"><div class="crm-stat__val" id="stat-clientes">0</div><div class="crm-stat__label">Clientes Activos</div></div>
+<div class="crm-stat"><div class="crm-stat__val crm-stat__val--yellow" id="stat-proposta">0</div><div class="crm-stat__label">Proposta Enviada</div></div>
+<div class="crm-stat"><div class="crm-stat__val crm-stat__val--orange" id="stat-hot">0</div><div class="crm-stat__label">Prioridade Hot 🔥</div></div>
+</div>
+<!-- ═══ PAINÉIS ══════════════════════════════════════════════════ -->
+<!-- ── LEADS ── -->
+<div class="crm-panel active" id="panel-leads">
+<div class="crm-filters">
+<span class="crm-filters__label">Status</span>
+<div class="filter-group">
+<button class="filter-btn active" data-filter-status="todos">Todos</button>
+<button class="filter-btn" data-filter-status="lead">Lead</button>
+<button class="filter-btn" data-filter-status="contactado">Contactado</button>
+<button class="filter-btn" data-filter-status="proposta">Proposta</button>
+<button class="filter-btn" data-filter-status="cliente">Cliente</button>
+<button class="filter-btn" data-filter-status="perdido">Perdido</button>
+</div>
+<span class="crm-filters__label u-ml-1">Prioridade</span>
+<div class="filter-group">
+<button class="filter-btn active" data-filter-prio="todos">Todas</button>
+<button class="filter-btn" data-filter-prio="hot">🔥 Hot</button>
+<button class="filter-btn" data-filter-prio="media">Média</button>
+<button class="filter-btn" data-filter-prio="cold">❄️ Cold</button>
+</div>
+<div class="crm-search">
+<span class="crm-search__icon">🔍</span>
+<input id="crm-search" placeholder="Pesquisar empresa, sector…" type="text"/>
+</div>
+</div>
+<div class="crm-table-wrap">
+<table class="crm-table">
+<thead>
+<tr>
+<th data-col="empresa">Empresa <span class="sort-icon">↕</span></th>
+<th data-col="status">Status <span class="sort-icon">↕</span></th>
+<th data-col="prioridade">Prioridade <span class="sort-icon">↕</span></th>
+<th data-col="valorEstimado">Valor Est. <span class="sort-icon">↕</span></th>
+<th data-col="ultimoContacto">Último Contacto <span class="sort-icon">↕</span></th>
+<th data-col="canalOrigem">Canal <span class="sort-icon">↕</span></th>
+<th>Notas</th>
+<th class="u-min-w-actions">Acções</th>
+</tr>
+</thead>
+<tbody id="crm-tbody"></tbody>
+</table>
+<div class="u-hidden" id="crm-empty">
+<div class="crm-empty">
+<div class="crm-empty-icon">📭</div>
+        Nenhum lead encontrado com os filtros actuais.
+      </div>
+</div>
+</div>
+</div>
+<!-- ── IMPORTAR / EXPORTAR ── -->
+<div class="crm-panel" id="panel-io">
+<div class="io-grid">
+<div class="io-card">
+<div class="io-card__icon">⬇️</div>
+<h3 class="io-card__title">Exportar dados</h3>
+<p class="io-card__desc">Descarrega todos os leads actuais. Compatível com Excel, Google Sheets e outros.</p>
+<div class="io-format-list">
+<span class="io-format">CSV</span>
+<span class="io-format io-format--inactive">PDF (em breve)</span>
+</div>
+<div class="u-flex-col">
+<button class="btn btn--primary" id="btn-export-all">Exportar todos → CSV</button>
+<button class="btn btn--secondary btn--disabled-ink" disabled="">Exportar relatório → PDF (brevemente)</button>
+</div>
+</div>
+<div class="io-card">
+<div class="io-card__icon">⬆️</div>
+<h3 class="io-card__title">Importar dados</h3>
+<p class="io-card__desc">Importa leads a partir de um ficheiro CSV. Descarrega o modelo para garantir o formato correcto.</p>
+<div class="io-format-list">
+<span class="io-format">CSV</span>
+<span class="io-format io-format--inactive">Excel (em breve)</span>
+</div>
+<div class="drop-zone" id="drop-zone">
+<input accept=".csv" id="import-file" type="file"/>
+<div class="drop-zone__icon">📁</div>
+<div>Arrasta um ficheiro CSV para aqui<br/><small>ou clica para seleccionar</small></div>
+</div>
+<div class="u-mt-flex-wrap">
+<button class="btn btn--primary" disabled="" id="btn-process-import">Importar ficheiro</button>
+<button class="btn btn--secondary t-ink" id="btn-download-template">⬇ Modelo CSV</button>
+</div>
+<div class="import-feedback-text" id="import-feedback"></div>
+</div>
+</div>
+</div>
+<!-- ── CONFIGURAÇÕES ── -->
+<div class="crm-panel" id="panel-settings">
+<div class="settings-wrap">
+<div class="settings-nav">
+<div class="settings-nav__item active" data-settings="fields"><span class="settings-nav__icon">⚙️</span> Campos das Leads</div>
+<div class="settings-nav__item" data-settings="users"><span class="settings-nav__icon">👥</span> Utilizadores</div>
+<div class="settings-nav__item" data-settings="status"><span class="settings-nav__icon">🏷</span> Status &amp; Prioridades</div>
+<div class="settings-nav__item" data-settings="docs"><span class="settings-nav__icon">📄</span> Templates</div>
+<div class="settings-nav__item" data-settings="general"><span class="settings-nav__icon">🔧</span> Geral</div>
+</div>
+<div class="settings-content">
+<!-- Campos -->
+<div class="settings-section active" id="settings-fields">
+<h3 class="settings-section__title">Campos das Leads</h3>
+<p class="settings-section__sub">Activa ou desactiva os campos que aparecem no formulário de novo lead e na tabela.</p>
+<div class="fields-list" id="fields-list"></div>
+<div class="u-mt-flex">
+<button class="btn btn--primary btn--sm" data-modal-open="modal-field">+ Adicionar campo</button>
+</div>
+</div>
+<!-- Utilizadores -->
+<div class="settings-section" id="settings-users">
+<h3 class="settings-section__title">Utilizadores</h3>
+<p class="settings-section__sub">Gestão de acessos ao CRM. <strong>Admin</strong> — acesso total. <strong>Editor</strong> — criar e editar. <strong>Viewer</strong> — só consulta.</p>
+<div class="users-list" id="users-list"></div>
+<div class="u-mt-125">
+<button class="btn btn--primary btn--sm" data-modal-open="modal-user">+ Adicionar utilizador</button>
+</div>
+</div>
+<!-- Status -->
+<div class="settings-section" id="settings-status">
+<h3 class="settings-section__title">Status &amp; Prioridades</h3>
+<p class="settings-section__sub">Personaliza os rótulos dos status e das prioridades.</p>
+<h4 class="settings-h4">Status</h4>
+<div class="fields-list">
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">Lead</span><span class="field-item__type">Cinza</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">Contactado</span><span class="field-item__type">Teal</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">Proposta Enviada</span><span class="field-item__type">Amarelo</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">Cliente</span><span class="field-item__type">Verde</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">Perdido</span><span class="field-item__type">Vermelho</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+</div>
+<div class="settings-divider"></div>
+<h4 class="settings-h4">Prioridades</h4>
+<div class="fields-list">
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">🔥 Alta (Hot)</span><span class="field-item__type">Laranja</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">Média</span><span class="field-item__type">Amarelo</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+<div class="field-item"><span class="field-item__drag">⠿</span><span class="field-item__name">❄️ Baixa (Cold)</span><span class="field-item__type">Cinza</span><div class="field-item__actions"><button class="btn btn--sm btn--secondary t-ink">Editar</button></div></div>
+</div>
+</div>
+<!-- Templates -->
+<div class="settings-section" id="settings-docs">
+<h3 class="settings-section__title">Templates de Documentos</h3>
+<p class="settings-section__sub">Acesso rápido às templates de diagnóstico e proposta.</p>
+<div class="fields-list">
+<div class="field-item"><span class="field-item__drag">📄</span><span class="field-item__name">Template — Versão Cliente</span><span class="field-item__type">HTML</span><div class="field-item__actions"><a class="btn btn--sm btn--primary" href="templates/cliente.html" target="_blank">Abrir</a></div></div>
+<div class="field-item"><span class="field-item__drag">📄</span><span class="field-item__name">Template — Versão Interna</span><span class="field-item__type">HTML</span><div class="field-item__actions"><a class="btn btn--sm btn--orange-solid" href="templates/interna.html" target="_blank">Abrir</a></div></div>
+</div>
+</div>
+<!-- Geral -->
+<div class="settings-section" id="settings-general">
+<h3 class="settings-section__title">Configurações Gerais</h3>
+<div class="form-row">
+<div class="form-group">
+<label>Nome da agência</label>
+<input type="text" value="Moz"/>
+</div>
+<div class="form-group">
+<label>Email de contacto</label>
+<input type="email" value="hello@moz.pt"/>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>Moeda</label>
+<select><option selected="">€ Euro</option><option>$ USD</option></select>
+</div>
+<div class="form-group">
+<label>Formato de data</label>
+<select><option selected="">DD/MM/YYYY</option><option>MM/DD/YYYY</option></select>
+</div>
+</div>
+<button class="btn btn--primary u-mt-05">Guardar alterações</button>
+<div class="settings-divider"></div>
+<h4 class="settings-h4">Backend / API</h4>
+<div class="hl-box hl-box--yellow">
+<p>Os dados estão actualmente em memória (sessão). Quando a Hostinger estiver configurada, definir aqui o URL da API para activar persistência real.</p>
+</div>
+<div class="form-row full u-mt-1">
+<div class="form-group">
+<label>URL da API</label>
+<input id="api-url" placeholder="https://api.moz.pt/v1" type="url"/>
+</div>
+</div>
+<button class="btn btn--sm btn--secondary t-ink">Testar ligação</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ═══ MODAL: NOVO / EDITAR LEAD ════════════════════════════════ -->
+<div class="modal-overlay" id="modal-lead">
+<div class="modal modal--wide">
+<div class="modal-tabs">
+<button class="modal-tab active" data-modal-tab="info">Informação</button>
+<button class="modal-tab" data-modal-tab="comercial">Comercial</button>
+<button class="modal-tab" data-modal-tab="docs">Documentos</button>
+<button class="modal-tab" data-modal-tab="notas">Notas</button>
+</div>
+<h2 class="modal__title" id="modal-lead-title">Novo Lead</h2>
+<form id="form-lead" novalidate="">
+<input id="f-lead-id" type="hidden"/>
+<div class="modal-tab-panel active" id="tab-info">
+<div class="form-row">
+<div class="form-group"><label>Empresa *</label><input id="f-empresa" name="empresa" placeholder="Nome da empresa" required="" type="text"/></div>
+<div class="form-group"><label>Sector</label><input id="f-sector" name="sector" placeholder="Ex: Restauração, Automóvel…" type="text"/></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Localização</label><input id="f-localizacao" name="localizacao" placeholder="Ex: Estremoz, Évora…" type="text"/></div>
+<div class="form-group"><label>Responsável / Contacto</label><input id="f-responsavel" name="responsavel" placeholder="Nome do decisor" type="text"/></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Email</label><input id="f-email-lead" name="emailLead" placeholder="contacto@empresa.pt" type="email"/></div>
+<div class="form-group"><label>Telefone / WhatsApp</label><input id="f-telefone" name="telefone" placeholder="+351 9XX XXX XXX" type="tel"/></div>
+</div>
+</div>
+<div class="modal-tab-panel" id="tab-comercial">
+<div class="form-row">
+<div class="form-group">
+<label>Status</label>
+<select id="f-status" name="status">
+<option value="lead">Lead</option>
+<option value="contactado">Contactado</option>
+<option value="proposta">Proposta Enviada</option>
+<option value="cliente">Cliente</option>
+<option value="perdido">Perdido</option>
+</select>
+</div>
+<div class="form-group">
+<label>Prioridade</label>
+<select id="f-prio" name="prioridade">
+<option value="hot">🔥 Alta (Hot)</option>
+<option selected="" value="media">Média</option>
+<option value="cold">❄️ Baixa (Cold)</option>
+</select>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Valor Estimado</label><input id="f-valor" name="valorEstimado" placeholder="Ex: € 650/mês" type="text"/></div>
+<div class="form-group"><label>Canal de Origem</label><input id="f-canal" name="canalOrigem" placeholder="Ex: Referência, Instagram…" type="text"/></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Último Contacto</label><input id="f-data" name="ultimoContacto" type="date"/></div>
+<div class="form-group"><label>Próximo Follow-up</label><input id="f-followup" name="followup" type="date"/></div>
+</div>
+</div>
+<div class="modal-tab-panel" id="tab-docs">
+<div class="form-row full">
+<div class="form-group"><label>Link — Versão Interna</label><input id="f-link-int" name="linkInterno" placeholder="https://…" type="url"/></div>
+</div>
+<div class="form-row full">
+<div class="form-group"><label>Link — Versão Cliente</label><input id="f-link-cli" name="linkCliente" placeholder="https://…" type="url"/></div>
+</div>
+<div class="hl-box hl-box--teal u-mt-1">
+<p>Após criar os ficheiros HTML de diagnóstico e proposta para este lead, cola aqui os URLs para acesso rápido a partir da tabela.</p>
+</div>
+</div>
+<div class="modal-tab-panel" id="tab-notas">
+<div class="form-row full">
+<div class="form-group"><label>Notas</label><textarea class="u-min-h-textarea" id="f-notas" name="notas" placeholder="Observações, pontos da conversa, próximas acções…"></textarea></div>
+</div>
+<p class="t-label-history">Histórico de alterações</p>
+<p class="t-note-sm">O histórico ficará disponível quando o backend estiver configurado.</p>
+</div>
+<div class="modal__footer">
+<button class="btn btn--pdf u-mr-auto" id="btn-lead-pdf" type="button">🖨 PDF</button>
+<button class="btn btn--secondary t-ink" data-modal-close="modal-lead" type="button">Cancelar</button>
+<button class="btn btn--primary" type="submit">Guardar lead</button>
+</div>
+</form>
+</div>
+</div>
+<!-- ═══ MODAL: UTILIZADOR ════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-user">
+<div class="modal">
+<h2 class="modal__title" id="modal-user-title">Adicionar utilizador</h2>
+<form id="form-user" novalidate="">
+<input id="fu-id" type="hidden"/>
+<div class="form-row">
+<div class="form-group"><label>Nome completo *</label><input id="fu-nome" placeholder="Nome do utilizador" type="text"/></div>
+<div class="form-group"><label>Email *</label><input id="fu-email" placeholder="email@moz.pt" type="email"/></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Palavra-passe *</label><input id="fu-pwd" placeholder="Mínimo 8 caracteres" type="password"/></div>
+<div class="form-group">
+<label>Role / Permissão</label>
+<select id="fu-role">
+<option value="admin">Admin — acesso total</option>
+<option selected="" value="editor">Editor — criar e editar</option>
+<option value="viewer">Viewer — só consulta</option>
+</select>
+</div>
+</div>
+<div class="modal__footer">
+<button class="btn btn--secondary t-ink" data-modal-close="modal-user" type="button">Cancelar</button>
+<button class="btn btn--primary" type="submit">Guardar</button>
+</div>
+</form>
+</div>
+</div>
+<!-- ═══ MODAL: ADICIONAR CAMPO ═══════════════════════════════════ -->
+<div class="modal-overlay" id="modal-field">
+<div class="modal">
+<h2 class="modal__title">Adicionar campo personalizado</h2>
+<form id="form-field" novalidate="">
+<div class="form-row">
+<div class="form-group"><label>Nome do campo *</label><input id="ff-name" placeholder="Ex: Website, Morada…" type="text"/></div>
+<div class="form-group">
+<label>Tipo</label>
+<select id="ff-type">
+<option value="text">Texto</option>
+<option value="url">URL / Link</option>
+<option value="email">Email</option>
+<option value="number">Número</option>
+<option value="date">Data</option>
+<option value="textarea">Texto longo</option>
+</select>
+</div>
+</div>
+<div class="form-row full">
+<div class="form-group"><label>Placeholder</label><input id="ff-placeholder" placeholder="Texto de exemplo…" type="text"/></div>
+</div>
+<div class="modal__footer">
+<button class="btn btn--secondary t-ink" data-modal-close="modal-field" type="button">Cancelar</button>
+<button class="btn btn--primary" type="submit">Adicionar campo</button>
+</div>
+</form>
+</div>
+</div>
+<script src="assets/js/crm.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html lang="pt">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Moz CRM · Entrar</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<link href="assets/css/login.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="bg-stripe"></div>
+<div class="bg-blob bg-blob--1"></div>
+<div class="bg-blob bg-blob--2"></div>
+<div class="login-wrap">
+<div class="login-card">
+<!-- Logo -->
+<div class="login-logo">
+<div class="login-logo__mark">m<span>o</span>z</div>
+<div class="login-logo__sub">CRM · Área Restrita</div>
+</div>
+<div class="login-divider"></div>
+<h1 class="login-title">Bem-vindo de volta.</h1>
+<p class="login-subtitle">Introduz as tuas credenciais para aceder ao CRM.</p>
+<!-- Erro -->
+<div class="login-error" id="login-error">
+<span>⚠</span>
+<span id="login-error-msg">Email ou palavra-passe incorrectos.</span>
+</div>
+<!-- Formulário -->
+<form autocomplete="on" id="login-form" novalidate="">
+<div class="form-group">
+<label for="email">Email</label>
+<div class="input-wrap">
+<span class="input-icon">✉</span>
+<input autocomplete="email" id="email" name="email" placeholder="o.teu@moz.pt" required="" type="email"/>
+</div>
+</div>
+<div class="form-group">
+<label for="password">Palavra-passe</label>
+<div class="input-wrap">
+<span class="input-icon">🔒</span>
+<input autocomplete="current-password" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button aria-label="Mostrar palavra-passe" class="password-toggle" id="pwd-toggle" type="button">👁</button>
+</div>
+</div>
+<div class="login-options">
+<label class="remember-me">
+<input id="remember" name="remember" type="checkbox"/>
+          Manter sessão
+        </label>
+<a class="forgot-link" href="#">Esqueceste a palavra-passe?</a>
+</div>
+<button class="btn-login" id="btn-login" type="submit">
+<div class="spinner"></div>
+<span class="btn-text">Entrar →</span>
+</button>
+</form>
+<div class="login-footer">
+<a href="crm.html">← Voltar</a>
+       · 
+      Moz CRM v1.0 · <a href="mailto:hello@moz.pt">Suporte</a>
+</div>
+</div>
+<div class="login-badge">Acesso restrito · Moz Estremoz</div>
+</div>
+<script src="assets/js/login.js"></script>
+</body>
+</html>

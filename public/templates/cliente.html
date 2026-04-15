@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html lang="pt">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{EMPRESA}} · Proposta Moz 2026</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;0,900;1,300;1,700&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+<link href="../assets/css/template-cliente.css" rel="stylesheet"/>
+</head>
+<body>
+<!-- ═══ NAV ════════════════════════════════════════════════════ -->
+<nav class="nav">
+<a class="nav__logo" href="#top">m<span>o</span>z</a>
+<ul class="nav__links">
+<li><a href="#diagnostico">Diagnóstico</a></li>
+<li><a href="#swot">SWOT</a></li>
+<li><a href="#proposta">Proposta</a></li>
+<li><a href="#pilares">Pilares</a></li>
+<li><a href="#faseamento">Faseamento</a></li>
+<li><a href="#kpis">KPIs</a></li>
+<li><a href="#investimento">Investimento</a></li>
+</ul>
+<span class="nav__meta">{{EMPRESA}} · {{DATA}}</span>
+</nav>
+<!-- ═══ CAPA ════════════════════════════════════════════════════ -->
+<div class="cover" id="top">
+<div class="cover__blob-1"></div>
+<div class="cover__blob-2"></div>
+<div class="cover__top">
+<div class="cover__logo">m<span>o</span>z</div>
+<span class="cover__pill">Diagnóstico Estratégico &amp; Proposta Comercial</span>
+</div>
+<div class="cover__body">
+<p class="cover__eyebrow">Elaborado pela Moz para · {{EMPRESA}} · {{DATA}}</p>
+<h1 class="cover__title">
+      {{HEADLINE_L1}}<br/>
+<em>{{HEADLINE_L2}}</em><br/>
+<strong>{{HEADLINE_L3}}</strong>
+</h1>
+<p class="cover__tagline">{{COVER_TAGLINE}}</p>
+</div>
+<div class="cover__bottom">
+<div class="cover__stat"><div class="cover__stat-label">Empresa</div><div class="cover__stat-val">{{EMPRESA}}</div></div>
+<div class="cover__stat"><div class="cover__stat-label">Sector</div><div class="cover__stat-val">{{SECTOR}}</div></div>
+<div class="cover__stat"><div class="cover__stat-label">Localização</div><div class="cover__stat-val">{{LOCALIZACAO}}</div></div>
+<div class="cover__stat"><div class="cover__stat-label">Data</div><div class="cover__stat-val">{{DATA}}</div></div>
+</div>
+</div>
+<div class="stripe"></div>
+<!-- ═══════════════════════════════════════════════════════════
+     PARTE 1 — DIAGNÓSTICO
+════════════════════════════════════════════════════════════════ -->
+<div class="part-sep" id="diagnostico">
+<div class="part-sep__num">01</div>
+<div>
+<p class="part-sep__label">Primeira Parte</p>
+<h2 class="part-sep__title">Diagnóstico Estratégico</h2>
+</div>
+</div>
+<!-- 1.1 PERFIL -->
+<section class="section section--alt">
+<p class="section__eyebrow t-eyebrow">1.1 · Perfil da Empresa</p>
+<h2 class="section__title">Quem é a <em>{{EMPRESA}}.</em></h2>
+<p class="section__sub">{{PERFIL_INTRO}}</p>
+<div class="profile-grid">
+<div class="profile-cell"><div class="profile-cell__label">Empresa</div><div class="profile-cell__val">{{DESIGNACAO_LEGAL}}</div></div>
+<div class="profile-cell"><div class="profile-cell__label">Fundação</div><div class="profile-cell__val profile-cell__val--big">{{ANO_FUNDACAO}}</div></div>
+<div class="profile-cell"><div class="profile-cell__label">Responsável</div><div class="profile-cell__val">{{PROPRIETARIO}}</div></div>
+<div class="profile-cell"><div class="profile-cell__label">Sector</div><div class="profile-cell__val">{{SECTOR_CAE}}</div></div>
+<div class="profile-cell"><div class="profile-cell__label">Localização</div><div class="profile-cell__val">{{MORADA}}</div></div>
+<div class="profile-cell"><div class="profile-cell__label">Conceito</div><div class="profile-cell__val">{{PRECO_POSICIONAMENTO}}</div></div>
+<div class="profile-cell"><div class="profile-cell__label">Instalações</div><div class="profile-cell__val">{{INSTALACOES}}</div></div>
+<div class="profile-cell"><div class="profile-cell__label">Marcas / Parceiros</div><div class="profile-cell__val">{{MARCAS_PARCEIROS}}</div></div>
+</div>
+<div class="hl-box hl-box--teal u-mt-md">
+<p>{{PERFIL_HL}}</p>
+</div>
+</section>
+<!-- 1.2 HISTÓRIA -->
+<section class="section">
+<p class="section__eyebrow t-eyebrow">1.2 · História</p>
+<h2 class="section__title">Uma história que <em>diferencia.</em></h2>
+<p class="section__sub">{{HISTORIA_INTRO}}</p>
+<div class="grid-3 grid-gap-1">
+<div class="c-timeline-card c-timeline-card--yellow">
+<p class="c-year">{{ANO_1}}</p>
+<p class="t-label-sm">{{MARCO_1_LABEL}}</p>
+<p class="t-card-text">{{MARCO_1_DESC}}</p>
+</div>
+<div class="c-timeline-card c-timeline-card--orange">
+<p class="c-year">{{ANO_2}}</p>
+<p class="t-label-sm">{{MARCO_2_LABEL}}</p>
+<p class="t-card-text">{{MARCO_2_DESC}}</p>
+</div>
+<div class="c-timeline-card c-timeline-card--teal">
+<p class="c-year">{{ANO_3}}</p>
+<p class="t-label-sm">{{MARCO_3_LABEL}}</p>
+<p class="t-card-text">{{MARCO_3_DESC}}</p>
+</div>
+</div>
+</section>
+<!-- 1.3 CONTEXTO DE MERCADO -->
+<section class="section section--alt">
+<p class="section__eyebrow t-eyebrow">1.3 · Contexto de Mercado</p>
+<h2 class="section__title">O sector em <em>{{ANO_ACTUAL}}.</em></h2>
+<p class="section__sub">{{MERCADO_INTRO}}</p>
+<div class="grid-4 u-mb-md">
+<div class="c-stat-card">
+<div class="c-stat-val">{{STAT_1_VAL}}</div>
+<div class="t-muted-sm">{{STAT_1_DESC}}</div>
+</div>
+<div class="c-stat-card c-stat-card--orange">
+<div class="c-stat-val c-stat-val--orange">{{STAT_2_VAL}}</div>
+<div class="t-muted-sm">{{STAT_2_DESC}}</div>
+</div>
+<div class="c-stat-card c-stat-card--yellow">
+<div class="c-stat-val c-stat-val--yellow">{{STAT_3_VAL}}</div>
+<div class="t-muted-sm">{{STAT_3_DESC}}</div>
+</div>
+<div class="c-stat-card c-stat-card--magenta">
+<div class="c-stat-val c-stat-val--magenta">{{STAT_4_VAL}}</div>
+<div class="t-muted-sm">{{STAT_4_DESC}}</div>
+</div>
+</div>
+</section>
+<!-- 1.4 RECONHECIMENTOS (se aplicável) -->
+<section class="section">
+<p class="section__eyebrow t-eyebrow">1.4 · Reconhecimentos &amp; Reputação</p>
+<h2 class="section__title">Prémios e distinções <em>que falam por si.</em></h2>
+<p class="section__sub">{{RECONHECIMENTOS_INTRO}}</p>
+<div class="grid-3 u-gap-15">
+<div class="c-award-card c-award-card--yellow">
+<div class="c-icon-lg">{{PREMIO_1_ICON}}</div>
+<div class="c-card-title-md">{{PREMIO_1_NOME}}</div>
+<div class="t-muted-sm">{{PREMIO_1_DESC}}</div>
+</div>
+<div class="c-award-card c-award-card--teal">
+<div class="c-icon-lg">{{PREMIO_2_ICON}}</div>
+<div class="c-card-title-md">{{PREMIO_2_NOME}}</div>
+<div class="t-muted-sm">{{PREMIO_2_DESC}}</div>
+</div>
+<div class="c-award-card c-award-card--orange">
+<div class="c-icon-lg">{{PREMIO_3_ICON}}</div>
+<div class="c-card-title-md">{{PREMIO_3_NOME}}</div>
+<div class="t-muted-sm">{{PREMIO_3_DESC}}</div>
+</div>
+</div>
+</section>
+<!-- 1.5 PRESENÇA DIGITAL (resumida) -->
+<section class="section section--alt">
+<p class="section__eyebrow t-eyebrow">1.5 · Presença Digital Actual</p>
+<h2 class="section__title">O que existe e <em>onde está.</em></h2>
+<p class="section__sub">{{DIGITAL_INTRO}}</p>
+<div class="grid-3 u-gap-15">
+<div class="c-card-p16">
+<div class="t-label-xs">🌐 Website</div>
+<div class="t-presence-val">{{WEBSITE_URL_SHORT}}</div>
+<div class="t-muted-xs">{{WEBSITE_STATUS_LABEL}}</div>
+</div>
+<div class="c-card-p16">
+<div class="t-label-xs">📸 Instagram</div>
+<div class="t-presence-val">{{INSTAGRAM_SEGUIDORES}} seguidores</div>
+<div class="t-muted-xs">{{INSTAGRAM_STATUS_LABEL}}</div>
+</div>
+<div class="c-card-p16">
+<div class="t-label-xs">📍 Google Business</div>
+<div class="t-presence-val">{{GOOGLE_RATING}} · {{GOOGLE_REVIEWS}} avaliações</div>
+<div class="t-muted-xs">{{GOOGLE_STATUS_LABEL}}</div>
+</div>
+</div>
+</section>
+<!-- 1.6 SWOT -->
+<section class="section" id="swot">
+<p class="section__eyebrow t-eyebrow">1.6 · Análise SWOT</p>
+<h2 class="section__title">Forças reais, <em>oportunidades concretas.</em></h2>
+<p class="section__sub">{{SWOT_INTRO}}</p>
+<div class="swot-grid">
+<div class="swot-cell swot-cell--s">
+<span class="badge badge--teal u-mb-12">Forças</span>
+<h3 class="swot-cell__title">O que já existe e funciona</h3>
+<ul class="swot-list">
+<li>{{FORCA_1}}</li><li>{{FORCA_2}}</li><li>{{FORCA_3}}</li>
+<li>{{FORCA_4}}</li><li>{{FORCA_5}}</li><li>{{FORCA_6}}</li>
+</ul>
+</div>
+<div class="swot-cell swot-cell--w">
+<span class="badge badge--orange u-mb-12">Fraquezas</span>
+<h3 class="swot-cell__title">O que pode ser melhorado</h3>
+<ul class="swot-list">
+<li>{{FRAQUEZA_1}}</li><li>{{FRAQUEZA_2}}</li><li>{{FRAQUEZA_3}}</li>
+<li>{{FRAQUEZA_4}}</li><li>{{FRAQUEZA_5}}</li><li>{{FRAQUEZA_6}}</li>
+</ul>
+</div>
+<div class="swot-cell swot-cell--o">
+<span class="badge badge--yellow u-mb-12">Oportunidades</span>
+<h3 class="swot-cell__title">O que pode ser explorado</h3>
+<ul class="swot-list">
+<li>{{OPORT_1}}</li><li>{{OPORT_2}}</li><li>{{OPORT_3}}</li>
+<li>{{OPORT_4}}</li><li>{{OPORT_5}}</li><li>{{OPORT_6}}</li>
+</ul>
+</div>
+<div class="swot-cell swot-cell--t">
+<span class="badge badge--magenta u-mb-12">Ameaças</span>
+<h3 class="swot-cell__title">O que pode comprometer</h3>
+<ul class="swot-list">
+<li>{{AMEACA_1}}</li><li>{{AMEACA_2}}</li><li>{{AMEACA_3}}</li>
+<li>{{AMEACA_4}}</li><li>{{AMEACA_5}}</li><li>{{AMEACA_6}}</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- 1.7 CONCORRÊNCIA (simplificada para cliente) -->
+<section class="section section--alt">
+<p class="section__eyebrow t-eyebrow">1.7 · Análise da Concorrência Digital</p>
+<h2 class="section__title">O panorama <em>no digital.</em></h2>
+<p class="section__sub">Comparação com os principais concorrentes na área local ({{CONCORRENCIA_LOCAL_AREA}}) e regional ({{CONCORRENCIA_REGIONAL_AREA}}).</p>
+<div class="diag-grid grid-comp">
+<div class="c-comp-card c-comp-card--teal">
+<div class="c-card-header">
+<div class="c-card-name">{{EMPRESA}} <span class="t-name-muted">(nós)</span></div>
+<span class="badge badge--teal">{{NOSSO_SCORE}}/10</span>
+</div>
+<ul class="swot-list">
+<li>{{NOSSO_ITEM1}}</li><li>{{NOSSO_ITEM2}}</li><li>{{NOSSO_ITEM3}}</li>
+</ul>
+</div>
+<div class="c-comp-card">
+<div class="c-card-header">
+<div class="c-card-name">{{COMP_LOCAL_1}}</div>
+<span class="badge badge--yellow">{{COMP_LOCAL_1_SCORE}}/10</span>
+</div>
+<ul class="swot-list">
+<li>{{CL1_ITEM1}}</li><li>{{CL1_ITEM2}}</li><li>{{CL1_ITEM3}}</li>
+</ul>
+</div>
+<div class="c-comp-card">
+<div class="c-card-header">
+<div class="c-card-name">{{COMP_REG_1}}</div>
+<span class="badge badge--orange">{{COMP_REG_1_SCORE}}/10</span>
+</div>
+<ul class="swot-list">
+<li>{{CR1_ITEM1}}</li><li>{{CR1_ITEM2}}</li><li>{{CR1_ITEM3}}</li>
+</ul>
+</div>
+</div>
+<div class="hl-box hl-box--orange">
+<p>{{CONCORRENCIA_CONCLUSAO}}</p>
+</div>
+</section>
+<!-- 1.8 DIAGNÓSTICO DIGITAL -->
+<section class="section">
+<p class="section__eyebrow t-eyebrow">1.8 · Diagnóstico Digital</p>
+<h2 class="section__title">Os gaps que custam <em>clientes.</em></h2>
+<p class="section__sub">{{DIAGNOSTICO_INTRO}}</p>
+<div class="diag-grid">
+<div class="diag-card diag-card--critical">
+<span class="badge badge--orange">Crítico</span>
+<h3 class="diag-card__title">{{DIAG_1_TITULO}}</h3>
+<p class="diag-card__text">{{DIAG_1_TEXTO}}</p>
+</div>
+<div class="diag-card diag-card--critical">
+<span class="badge badge--orange">Crítico</span>
+<h3 class="diag-card__title">{{DIAG_2_TITULO}}</h3>
+<p class="diag-card__text">{{DIAG_2_TEXTO}}</p>
+</div>
+<div class="diag-card diag-card--important">
+<span class="badge badge--yellow">Importante</span>
+<h3 class="diag-card__title">{{DIAG_3_TITULO}}</h3>
+<p class="diag-card__text">{{DIAG_3_TEXTO}}</p>
+</div>
+<div class="diag-card diag-card--important">
+<span class="badge badge--yellow">Importante</span>
+<h3 class="diag-card__title">{{DIAG_4_TITULO}}</h3>
+<p class="diag-card__text">{{DIAG_4_TEXTO}}</p>
+</div>
+<div class="diag-card diag-card--opportunity">
+<span class="badge badge--teal">Oportunidade</span>
+<h3 class="diag-card__title">{{DIAG_5_TITULO}}</h3>
+<p class="diag-card__text">{{DIAG_5_TEXTO}}</p>
+</div>
+<div class="diag-card diag-card--opportunity">
+<span class="badge badge--teal">Oportunidade</span>
+<h3 class="diag-card__title">{{DIAG_6_TITULO}}</h3>
+<p class="diag-card__text">{{DIAG_6_TEXTO}}</p>
+</div>
+</div>
+</section>
+<!-- ═══════════════════════════════════════════════════════════
+     PARTE 2 — PROPOSTA
+════════════════════════════════════════════════════════════════ -->
+<div class="part-sep" id="proposta">
+<div class="part-sep__num">02</div>
+<div>
+<p class="part-sep__label">Segunda Parte</p>
+<h2 class="part-sep__title">Proposta Comercial Moz</h2>
+</div>
+</div>
+<!-- 2.1 CONTEXTO -->
+<section class="section section--alt">
+<p class="section__eyebrow t-eyebrow">2.1 · Contexto da Proposta</p>
+<h2 class="section__title">{{PROPOSTA_TITULO}}</h2>
+<p class="section__sub">{{PROPOSTA_INTRO}}</p>
+<div class="grid-2">
+<div>
+<p class="body-text">{{PROPOSTA_TEXTO_1}}</p>
+<p class="body-text">{{PROPOSTA_TEXTO_2}}</p>
+<p class="body-text-last">{{PROPOSTA_TEXTO_3}}</p>
+</div>
+<div class="c-dark-box">
+<p class="c-card-title-lg">O que o diagnóstico revelou</p>
+<ul class="u-list-none">
+<li class="int-list-item"><span class="t-orange-icon">✗</span>{{SINTESE_1}}</li>
+<li class="int-list-item"><span class="t-orange-icon">✗</span>{{SINTESE_2}}</li>
+<li class="int-list-item"><span class="t-orange-icon">✗</span>{{SINTESE_3}}</li>
+<li class="int-list-item"><span class="t-orange-icon">✗</span>{{SINTESE_4}}</li>
+<li class="int-list-item-last"><span class="t-orange-icon">✗</span>{{SINTESE_5}}</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- 2.2 OS 8 PILARES -->
+<section class="section" id="pilares">
+<p class="section__eyebrow t-eyebrow">2.2 · Os 8 Pilares</p>
+<h2 class="section__title">Estratégia → Imagem → Presença → <em>Alcance → Optimização.</em></h2>
+<p class="section__sub">{{PILARES_INTRO}}</p>
+<div class="pillar-list">
+<!-- PILAR 1 -->
+<div class="pillar-row">
+<div class="pillar-row__num">01</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">🧭</div>
+<div class="pillar-row__name">Estratégia Digital</div>
+<div class="pillar-row__tagline">Direcção antes de qualquer execução</div>
+</div>
+<div class="pillar-row__desc">{{P1_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P1_E1}}</li><li>{{P1_E2}}</li><li>{{P1_E3}}</li><li>{{P1_E4}}</li><li>{{P1_E5}}</li>
+</ul>
+</div>
+</div>
+<!-- PILAR 2 -->
+<div class="pillar-row">
+<div class="pillar-row__num">02</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">🎨</div>
+<div class="pillar-row__name">Identidade Visual &amp; Rebranding</div>
+<div class="pillar-row__tagline">A imagem que representa o negócio</div>
+</div>
+<div class="pillar-row__desc">{{P2_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P2_E1}}</li><li>{{P2_E2}}</li><li>{{P2_E3}}</li><li>{{P2_E4}}</li><li>{{P2_E5}}</li>
+</ul>
+</div>
+</div>
+<!-- PILAR 3 -->
+<div class="pillar-row">
+<div class="pillar-row__num">03</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">💻</div>
+<div class="pillar-row__name">Website</div>
+<div class="pillar-row__tagline">A presença central no digital</div>
+</div>
+<div class="pillar-row__desc">{{P3_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P3_E1}}</li><li>{{P3_E2}}</li><li>{{P3_E3}}</li><li>{{P3_E4}}</li><li>{{P3_E5}}</li>
+</ul>
+</div>
+</div>
+<!-- PILAR 4 -->
+<div class="pillar-row">
+<div class="pillar-row__num">04</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">🗺️</div>
+<div class="pillar-row__name">Perfil da Empresa no Google</div>
+<div class="pillar-row__tagline">Ser encontrado por quem já procura</div>
+</div>
+<div class="pillar-row__desc">{{P4_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P4_E1}}</li><li>{{P4_E2}}</li><li>{{P4_E3}}</li><li>{{P4_E4}}</li><li>{{P4_E5}}</li>
+</ul>
+</div>
+</div>
+<!-- PILAR 5 -->
+<div class="pillar-row">
+<div class="pillar-row__num">05</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">📱</div>
+<div class="pillar-row__name">Gestão de Redes Sociais</div>
+<div class="pillar-row__tagline">Conteúdo com propósito e consistência</div>
+</div>
+<div class="pillar-row__desc">{{P5_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P5_E1}}</li><li>{{P5_E2}}</li><li>{{P5_E3}}</li><li>{{P5_E4}}</li><li>{{P5_E5}}</li>
+</ul>
+</div>
+</div>
+<!-- PILAR 6 -->
+<div class="pillar-row">
+<div class="pillar-row__num">06</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">📈</div>
+<div class="pillar-row__name">Tráfego Pago (Meta &amp; Google Ads)</div>
+<div class="pillar-row__tagline">Amplificar nos momentos certos</div>
+</div>
+<div class="pillar-row__desc">{{P6_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P6_E1}}</li><li>{{P6_E2}}</li><li>{{P6_E3}}</li><li>{{P6_E4}}</li><li>{{P6_E5}}</li>
+</ul>
+</div>
+</div>
+<!-- PILAR 7 -->
+<div class="pillar-row">
+<div class="pillar-row__num">07</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">✉️</div>
+<div class="pillar-row__name">Email Marketing</div>
+<div class="pillar-row__tagline">Comunicação que gera recorrência</div>
+</div>
+<div class="pillar-row__desc">{{P7_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P7_E1}}</li><li>{{P7_E2}}</li><li>{{P7_E3}}</li><li>{{P7_E4}}</li><li>{{P7_E5}}</li>
+</ul>
+</div>
+</div>
+<!-- PILAR 8 -->
+<div class="pillar-row">
+<div class="pillar-row__num">08</div>
+<div class="pillar-row__main">
+<div class="pillar-row__icon">🤖</div>
+<div class="pillar-row__name">Automações com IA</div>
+<div class="pillar-row__tagline">O sistema trabalha por ti</div>
+</div>
+<div class="pillar-row__desc">{{P8_DESC}}</div>
+<div class="pillar-row__deliverables">
+<div class="pillar-col-label">Entregáveis</div>
+<ul class="pillar-items">
+<li>{{P8_E1}}</li><li>{{P8_E2}}</li><li>{{P8_E3}}</li><li>{{P8_E4}}</li><li>{{P8_E5}}</li>
+</ul>
+</div>
+</div>
+</div><!-- /pillar-list -->
+</section>
+<!-- 2.3 FASEAMENTO -->
+<section class="section section--teal" id="faseamento">
+<p class="section__eyebrow t-eyebrow">2.3 · Faseamento</p>
+<h2 class="section__title">Construir com <em>a ordem certa.</em></h2>
+<p class="section__sub">{{FASEAMENTO_INTRO}}</p>
+<div class="phase-blocks">
+<div class="phase-block phase-block--1">
+<span class="badge badge--orange u-mb-12">Fase 1 · Fundação</span>
+<div class="phase-block__month">{{FASE1_MESES}}</div>
+<h3 class="phase-block__title">{{FASE1_TITULO}}</h3>
+<ul class="phase-services">
+<li>{{FASE1_S1}}</li><li>{{FASE1_S2}}</li><li>{{FASE1_S3}}</li><li>{{FASE1_S4}}</li>
+</ul>
+<p class="phase-block__rationale">{{FASE1_RACIONAL}}</p>
+</div>
+<div class="phase-block phase-block--2">
+<span class="badge badge--yellow u-mb-12">Fase 2 · Activação</span>
+<div class="phase-block__month">{{FASE2_MESES}}</div>
+<h3 class="phase-block__title">{{FASE2_TITULO}}</h3>
+<ul class="phase-services">
+<li>{{FASE2_S1}}</li><li>{{FASE2_S2}}</li><li>{{FASE2_S3}}</li><li>{{FASE2_S4}}</li>
+</ul>
+<p class="phase-block__rationale">{{FASE2_RACIONAL}}</p>
+</div>
+<div class="phase-block phase-block--3">
+<span class="badge badge--teal u-mb-12">Fase 3 · Escala</span>
+<div class="phase-block__month">{{FASE3_MESES}}</div>
+<h3 class="phase-block__title">{{FASE3_TITULO}}</h3>
+<ul class="phase-services">
+<li>{{FASE3_S1}}</li><li>{{FASE3_S2}}</li><li>{{FASE3_S3}}</li><li>{{FASE3_S4}}</li>
+</ul>
+<p class="phase-block__rationale">{{FASE3_RACIONAL}}</p>
+</div>
+</div>
+</section>
+<!-- 2.4 KPIS -->
+<section class="section section--alt" id="kpis">
+<p class="section__eyebrow t-eyebrow">2.4 · Indicadores de Sucesso</p>
+<h2 class="section__title">O que vamos <em>medir.</em></h2>
+<p class="section__sub">{{KPIS_INTRO}}</p>
+<table class="data-table">
+<thead>
+<tr><th>Indicador (KPI)</th><th>Hoje</th><th>6 Meses</th><th>12 Meses</th></tr>
+</thead>
+<tbody>
+<tr><td>{{KPI_1}}</td><td>{{KPI_1_BASE}}</td><td class="td-kpi-6m">{{KPI_1_6M}}</td><td class="td-kpi-12m">{{KPI_1_12M}}</td></tr>
+<tr><td>{{KPI_2}}</td><td>{{KPI_2_BASE}}</td><td class="td-kpi-6m">{{KPI_2_6M}}</td><td class="td-kpi-12m">{{KPI_2_12M}}</td></tr>
+<tr><td>{{KPI_3}}</td><td>{{KPI_3_BASE}}</td><td class="td-kpi-6m">{{KPI_3_6M}}</td><td class="td-kpi-12m">{{KPI_3_12M}}</td></tr>
+<tr><td>{{KPI_4}}</td><td>{{KPI_4_BASE}}</td><td class="td-kpi-6m">{{KPI_4_6M}}</td><td class="td-kpi-12m">{{KPI_4_12M}}</td></tr>
+<tr><td>{{KPI_5}}</td><td>{{KPI_5_BASE}}</td><td class="td-kpi-6m">{{KPI_5_6M}}</td><td class="td-kpi-12m">{{KPI_5_12M}}</td></tr>
+<tr><td>{{KPI_6}}</td><td>{{KPI_6_BASE}}</td><td class="td-kpi-6m">{{KPI_6_6M}}</td><td class="td-kpi-12m">{{KPI_6_12M}}</td></tr>
+</tbody>
+</table>
+</section>
+<!-- 2.5 PORQUÊ A MOZ -->
+<section class="section">
+<p class="section__eyebrow t-eyebrow">2.5 · Porquê a Moz</p>
+<h2 class="section__title">Somos <em>locais</em> e conhecemos o sector.</h2>
+<p class="section__sub">{{MOZ_INTRO}}</p>
+<div class="grid-3 u-gap-15">
+<div class="c-value-card" onmouseenter="this.style.cssText+=';border-top-color:var(--color-orange);box-shadow:0 4px 20px rgba(0,0,0,.06)'" onmouseleave="this.style.cssText=this.style.cssText.replace('border-top-color:var(--color-orange);','').replace('box-shadow:0 4px 20px rgba(0,0,0,.06)','')">
+<div class="c-icon-lg">{{MOZ_V1_ICON}}</div>
+<div class="c-card-title">{{MOZ_V1_TITULO}}</div>
+<div class="t-desc">{{MOZ_V1_TEXTO}}</div>
+</div>
+<div class="c-value-card" onmouseenter="this.style.cssText+=';border-top-color:var(--color-orange);box-shadow:0 4px 20px rgba(0,0,0,.06)'" onmouseleave="this.style.cssText=this.style.cssText.replace('border-top-color:var(--color-orange);','').replace('box-shadow:0 4px 20px rgba(0,0,0,.06)','')">
+<div class="c-icon-lg">{{MOZ_V2_ICON}}</div>
+<div class="c-card-title">{{MOZ_V2_TITULO}}</div>
+<div class="t-desc">{{MOZ_V2_TEXTO}}</div>
+</div>
+<div class="c-value-card" onmouseenter="this.style.cssText+=';border-top-color:var(--color-orange);box-shadow:0 4px 20px rgba(0,0,0,.06)'" onmouseleave="this.style.cssText=this.style.cssText.replace('border-top-color:var(--color-orange);','').replace('box-shadow:0 4px 20px rgba(0,0,0,.06)','')">
+<div class="c-icon-lg">{{MOZ_V3_ICON}}</div>
+<div class="c-card-title">{{MOZ_V3_TITULO}}</div>
+<div class="t-desc">{{MOZ_V3_TEXTO}}</div>
+</div>
+</div>
+</section>
+<!-- 2.6 INVESTIMENTO -->
+<section class="section section--alt" id="investimento">
+<p class="section__eyebrow t-eyebrow">2.6 · Investimento</p>
+<h2 class="section__title">Transparente. <em>Sem surpresas.</em></h2>
+<p class="section__sub">{{INVESTIMENTO_INTRO}}</p>
+<table class="data-table">
+<thead>
+<tr><th>Serviço / Pilar</th><th>Tipo</th><th>Âmbito</th><th>Investimento</th></tr>
+</thead>
+<tbody>
+<tr><td>Estratégia Digital</td><td><span class="badge badge--orange">One-off</span></td><td>{{INV_P1_AMBITO}}</td><td class="td-kpi-6m">{{INV_P1_PRECO}}</td></tr>
+<tr><td>Identidade Visual &amp; Rebranding</td><td><span class="badge badge--orange">One-off</span></td><td>{{INV_P2_AMBITO}}</td><td class="td-kpi-6m">{{INV_P2_PRECO}}</td></tr>
+<tr><td>Website</td><td><span class="badge badge--orange">One-off</span></td><td>{{INV_P3_AMBITO}}</td><td class="td-kpi-6m">{{INV_P3_PRECO}}</td></tr>
+<tr><td>Perfil da Empresa no Google</td><td><span class="badge badge--teal">Mensal</span></td><td>{{INV_P4_AMBITO}}</td><td class="td-kpi-6m">{{INV_P4_PRECO}}</td></tr>
+<tr><td>Gestão de Redes Sociais</td><td><span class="badge badge--teal">Mensal</span></td><td>{{INV_P5_AMBITO}}</td><td class="td-kpi-6m">{{INV_P5_PRECO}}</td></tr>
+<tr><td>Tráfego Pago (Meta &amp; Google Ads)</td><td><span class="badge badge--teal">Mensal</span></td><td>{{INV_P6_AMBITO}}</td><td class="td-kpi-6m">{{INV_P6_PRECO}}</td></tr>
+<tr><td>Email Marketing</td><td><span class="badge badge--teal">Mensal</span></td><td>{{INV_P7_AMBITO}}</td><td class="td-kpi-6m">{{INV_P7_PRECO}}</td></tr>
+<tr><td>Automações com IA</td><td><span class="badge badge--ink">Impl. + Manutenção</span></td><td>{{INV_P8_AMBITO}}</td><td class="td-kpi-6m">{{INV_P8_PRECO}}</td></tr>
+</tbody>
+</table>
+<div class="table-note">{{INVESTIMENTO_NOTA}}</div>
+</section>
+<!-- ═══ CTA ══════════════════════════════════════════════════════ -->
+<div class="cta-block">
+<div class="cta-block__blob"></div>
+<div>
+<h2 class="cta-block__title">{{CTA_TITULO_L1}}<br/><em>{{CTA_TITULO_L2}}</em><br/>{{CTA_TITULO_L3}}</h2>
+<p class="cta-block__sub">{{CTA_TEXTO}}</p>
+<a class="cta-block__btn" href="mailto:hello@moz.pt">Agendar reunião →</a>
+</div>
+<div class="cta-block__contact">
+<div>
+<div class="cta-item__label">Email</div>
+<div class="cta-item__val"><a href="mailto:hello@moz.pt">hello@moz.pt</a></div>
+</div>
+<div>
+<div class="cta-item__label">WhatsApp</div>
+<div class="cta-item__val"><a href="https://wa.me/351912420900">+351 912 420 900</a></div>
+</div>
+<div>
+<div class="cta-item__label">Morada</div>
+<div class="cta-item__val">Rua da Restauração, 36<br/>7100-530 Estremoz</div>
+</div>
+<div>
+<div class="cta-item__label">Website</div>
+<div class="cta-item__val"><a href="https://www.moz.pt">www.moz.pt</a></div>
+</div>
+</div>
+</div>
+<!-- ═══ FOOTER ══════════════════════════════════════════════════ -->
+<footer class="doc-footer">
+<div class="logo-moz">m<span>o</span>z</div>
+<div class="doc-footer__note">
+    Diagnóstico Estratégico &amp; Proposta Comercial · Proposta válida 30 dias · Confidencial<br/>
+    {{EMPRESA}} · {{DATA}} · Moz — Estremoz
+  </div>
+</footer>
+<script src="../assets/js/script.js"></script>
+</body>
+</html>
