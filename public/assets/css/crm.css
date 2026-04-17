@@ -706,3 +706,26 @@
 .td-notes        { max-width: 180px; font-size: .78rem; }
 .pdf-notes-text  { font-size: 12px; line-height: 1.7; white-space: pre-wrap; }
 .btn--danger-lt  { background: #fce8e8; color: #a01010; border: none; cursor: pointer; }
+
+/* ── FIXES VISIBILIDADE ──────────────────────────────────────── */
+.btn-logout {
+  color: rgba(255,255,255,.75) !important;
+  border-color: rgba(255,255,255,.25) !important;
+}
+.btn-logout:hover {
+  color: #e74c3c !important;
+  border-color: rgba(231,76,60,.5) !important;
+}
+.crm-tab-link {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.75);
+  text-decoration: none;
+  padding: .35rem .7rem;
+  border-radius: 4px;
+  transition: color .15s, background .15s;
+}
+.crm-tab-link:hover { color: #fff; background: rgba(255,255,255,.08); }
+.crm-tab-link--active { color: var(--color-teal) !important; background: rgba(50,141,151,.15) !important; }

@@ -69,9 +69,9 @@
   function switchTab(name) {
     Object.values(panels).forEach(p => p.classList.remove('active'));
     tabLinks.forEach(l => {
-      const active = l.dataset.tab === name;
-      l.style.color      = active ? 'var(--color-teal)' : 'rgba(255,255,255,.45)';
-      l.style.background = active ? 'rgba(50,141,151,.15)' : '';
+      l.style.color      = '';
+      l.style.background = '';
+      l.classList.toggle('crm-tab-link--active', l.dataset.tab === name);
     });
     if (panels[name]) panels[name].classList.add('active');
   }
