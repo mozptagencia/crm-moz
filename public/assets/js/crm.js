@@ -38,6 +38,12 @@
   document.getElementById('user-name').textContent   = session.nome || session.name || session.email;
   document.getElementById('user-role').textContent   = '· ' + (session.role === 'admin' ? 'Admin' : session.role === 'editor' ? 'Editor' : 'Viewer');
 
+  // Ocultar Configurações para não-admins
+  if (session.role !== 'admin') {
+    const settingsLink = document.querySelector('[data-tab="settings"]');
+    if (settingsLink) settingsLink.style.display = 'none';
+  }
+
   document.getElementById('btn-logout').addEventListener('click', () => {
     localStorage.removeItem('moz_user'); localStorage.removeItem('moz_token');
     sessionStorage.removeItem('moz_user'); sessionStorage.removeItem('moz_token');
@@ -227,6 +233,8 @@
       document.getElementById('modal-lead-title').textContent = 'Novo Lead';
       document.getElementById('f-lead-id').value = '';
       document.getElementById('form-lead').reset();
+      renderLeadCustomFields(null);
+      updateOthersTabVisibility();
       switchModalTab('info');
       openModal('modal-lead');
     });
@@ -253,6 +261,8 @@
     document.getElementById('f-link-int').value    = l.linkInterno   || '';
     document.getElementById('f-link-cli').value    = l.linkCliente   || '';
     document.getElementById('f-notas').value       = l.notas         || '';
+    renderLeadCustomFields(l);
+    updateOthersTabVisibility();
     switchModalTab('info');
     openModal('modal-lead');
   }
@@ -279,6 +289,12 @@
       link_cliente:    document.getElementById('f-link-cli').value.trim(),
       notas:           document.getElementById('f-notas').value.trim(),
     };
+
+    // Recolher campos custom da tab "Outros"
+    allFields.filter(f => f.custom && f.active).forEach(f => {
+      const el = document.getElementById('fcustom-' + f.key);
+      if (el) payload[f.key] = el.value;
+    });
 
     if (!payload.empresa) { alert('O nome da empresa é obrigatório.'); return; }
 
@@ -488,42 +504,238 @@
      13. SETTINGS — CAMPOS & NAVEGAÇÃO
   ══════════════════════════════════════════════════════════ */
   const defaultFields = [
-    { key:'empresa', label:'Empresa', type:'text', active:true },
-    { key:'sector', label:'Sector', type:'text', active:true },
-    { key:'localizacao', label:'Localização', type:'text', active:true },
-    { key:'responsavel', label:'Responsável', type:'text', active:true },
-    { key:'emailLead', label:'Email', type:'email', active:true },
-    { key:'telefone', label:'Telefone', type:'tel', active:true },
-    { key:'status', label:'Status', type:'select', active:true },
-    { key:'prioridade', label:'Prioridade', type:'select', active:true },
-    { key:'valorEstimado', label:'Valor Estimado', type:'text', active:true },
-    { key:'canalOrigem', label:'Canal de Origem', type:'text', active:true },
-    { key:'ultimoContacto', label:'Último Contacto', type:'date', active:true },
-    { key:'followup', label:'Follow-up', type:'date', active:true },
-    { key:'linkInterno', label:'Link Interno', type:'url', active:true },
-    { key:'linkCliente', label:'Link Cliente', type:'url', active:true },
-    { key:'notas', label:'Notas', type:'textarea', active:true },
+    { key:'empresa',        label:'Empresa',         type:'text',     active:true, system:true },
+    { key:'sector',         label:'Sector',          type:'text',     active:true, system:true },
+    { key:'localizacao',    label:'Localização',     type:'text',     active:true, system:true },
+    { key:'responsavel',    label:'Responsável',     type:'text',     active:true, system:true },
+    { key:'emailLead',      label:'Email',           type:'email',    active:true, system:true },
+    { key:'telefone',       label:'Telefone',        type:'tel',      active:true, system:true },
+    { key:'status',         label:'Status',          type:'select',   active:true, system:true },
+    { key:'prioridade',     label:'Prioridade',      type:'select',   active:true, system:true },
+    { key:'valorEstimado',  label:'Valor Estimado',  type:'text',     active:true, system:true },
+    { key:'canalOrigem',    label:'Canal de Origem', type:'text',     active:true, system:true },
+    { key:'ultimoContacto', label:'Último Contacto', type:'date',     active:true, system:true },
+    { key:'followup',       label:'Follow-up',       type:'date',     active:true, system:true },
+    { key:'linkInterno',    label:'Link Interno',    type:'url',      active:true, system:true },
+    { key:'linkCliente',    label:'Link Cliente',    type:'url',      active:true, system:true },
+    { key:'notas',          label:'Notas',           type:'textarea', active:true, system:true },
   ];
   let allFields = [...defaultFields, ...customFields];
+
+  /* ── Auxiliares de campos custom ─────────────────────────────*/
+  function fieldTypeLabel(f) {
+    const map = { text:'Texto', url:'URL', email:'Email', tel:'Telefone', number:'Número', date:'Data', textarea:'Texto longo', select:'Lista' };
+    if (f.type === 'select' && f.options?.source) return `Lista (${f.options.source === 'status' ? 'Status' : 'Prioridades'})`;
+    return map[f.type] || f.type;
+  }
+
+  function getOptionsForSource(source) {
+    if (source === 'status') return [
+      { value:'lead', label:'Lead' }, { value:'contactado', label:'Contactado' },
+      { value:'proposta', label:'Proposta Enviada' }, { value:'cliente', label:'Cliente' }, { value:'perdido', label:'Perdido' },
+    ];
+    if (source === 'prioridades') return [
+      { value:'hot', label:'🔥 Alta (Hot)' }, { value:'media', label:'Média' }, { value:'cold', label:'❄️ Baixa (Cold)' },
+    ];
+    return [];
+  }
+
+  function toggleSelectSection(show) {
+    const sec = document.getElementById('ff-select-options');
+    const row = document.getElementById('ff-placeholder-row');
+    if (sec) sec.style.display = show ? '' : 'none';
+    if (row) row.style.display = show ? 'none' : '';
+  }
+
+  function populateDefaultValues(source, currentVal) {
+    const sel = document.getElementById('ff-default-value');
+    if (!sel) return;
+    sel.innerHTML = getOptionsForSource(source).map(o =>
+      `<option value="${o.value}"${o.value === currentVal ? ' selected' : ''}>${o.label}</option>`
+    ).join('');
+  }
+
+  function updateOthersTabVisibility() {
+    const tabBtn = document.getElementById('tab-btn-outros');
+    if (tabBtn) tabBtn.style.display = allFields.some(f => f.custom && f.active) ? '' : 'none';
+  }
+
+  function renderLeadCustomFields(leadData) {
+    const panel = document.getElementById('tab-outros');
+    if (!panel) return;
+    const active = allFields.filter(f => f.custom && f.active);
+    if (!active.length) {
+      panel.innerHTML = '<p class="settings-section__sub" style="padding:.5rem 0">Ainda não há campos personalizados. Adiciona campos em ⚙️ Configurações.</p>';
+      return;
+    }
+    panel.innerHTML = active.map(f => {
+      const val = (leadData && leadData[f.key]) ? leadData[f.key] : '';
+      let input = '';
+      if (f.type === 'textarea') {
+        input = `<textarea id="fcustom-${f.key}" name="${f.key}" placeholder="${f.placeholder||''}">${val}</textarea>`;
+      } else if (f.type === 'select') {
+        const opts = getOptionsForSource(f.options?.source || '');
+        const def  = val || f.placeholder || '';
+        input = `<select id="fcustom-${f.key}" name="${f.key}">${opts.map(o => `<option value="${o.value}"${o.value===def?' selected':''}>${o.label}</option>`).join('')}</select>`;
+      } else {
+        input = `<input type="${f.type}" id="fcustom-${f.key}" name="${f.key}" placeholder="${f.placeholder||''}" value="${val}">`;
+      }
+      return `<div class="form-row full"><div class="form-group"><label>${f.label}</label>${input}</div></div>`;
+    }).join('');
+  }
+
+  async function loadCustomFields() {
+    try {
+      const data = await api('/settings/fields');
+      customFields = (data.fields || []).map(f => ({
+        id: f.id, key: f.key, label: f.label, type: f.type,
+        options: f.options, placeholder: f.placeholder,
+        active: f.active, position: f.position, custom: true,
+      }));
+      allFields = [...defaultFields, ...customFields];
+      renderFields();
+      updateOthersTabVisibility();
+    } catch { /* sem campos custom ou API indisponível */ }
+  }
+
+  async function saveCustomField(fieldData, existingId) {
+    if (!token) return { field: { ...fieldData } };
+    const method = existingId ? 'PUT' : 'POST';
+    const path   = existingId ? `/settings/fields/${existingId}` : '/settings/fields';
+    try {
+      return await api(path, { method, body: fieldData });
+    } catch (err) {
+      if (err.message.includes('500')) { alert('Erro ao guardar campo: ' + err.message); return null; }
+      return { field: { ...fieldData } };
+    }
+  }
+
+  async function deleteCustomField(id) {
+    if (!token || !id) return;
+    try { await api(`/settings/fields/${id}`, { method: 'DELETE' }); } catch {}
+  }
 
   function renderFields() {
     const el = document.getElementById('fields-list');
     if (!el) return;
-    el.innerHTML = allFields.map((f,i) => `
-      <div class="field-item"><span class="field-item__drag">⠿</span>
-      <span class="field-item__name">${f.label}</span><span class="field-item__type">${f.type}</span>
-      <label class="field-item__toggle"><input type="checkbox" ${f.active?'checked':''} data-field-toggle="${i}"><div class="toggle-track"></div></label>
+    el.innerHTML = allFields.map((f, i) => `
+      <div class="field-item" data-idx="${i}">
+        <span class="field-item__drag">⠿</span>
+        <span class="field-item__name">${f.label}</span>
+        <span class="field-item__type">${fieldTypeLabel(f)}</span>
+        <label class="field-item__toggle" title="${f.active ? 'Activo' : 'Inactivo'}">
+          <input type="checkbox" ${f.active ? 'checked' : ''} data-field-toggle="${i}">
+          <div class="toggle-track"></div>
+        </label>
+        ${f.custom ? `
+        <div class="field-item__actions">
+          <button class="btn btn--sm btn--secondary t-ink" data-edit-field="${i}">Editar</button>
+          <button class="btn btn--sm btn--danger-lt" data-delete-field="${i}">✕</button>
+        </div>` : ''}
       </div>`).join('');
-    el.querySelectorAll('[data-field-toggle]').forEach(cb => cb.addEventListener('change', () => { allFields[+cb.dataset.fieldToggle].active = cb.checked; }));
+
+    el.querySelectorAll('[data-field-toggle]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const f = allFields[+cb.dataset.fieldToggle];
+        f.active = cb.checked;
+        if (f.custom && f.id && token) api(`/settings/fields/${f.id}`, { method:'PUT', body:f }).catch(()=>{});
+        updateOthersTabVisibility();
+      });
+    });
+    el.querySelectorAll('[data-edit-field]').forEach(btn => btn.addEventListener('click', () => openEditField(+btn.dataset.editField)));
+    el.querySelectorAll('[data-delete-field]').forEach(btn => btn.addEventListener('click', () => deleteFieldLocal(+btn.dataset.deleteField)));
   }
 
-  document.getElementById('form-field')?.addEventListener('submit', e => {
+  function openEditField(idx) {
+    const f = allFields[idx];
+    if (!f?.custom) return;
+    document.querySelector('#modal-field .modal__title').textContent = 'Editar campo';
+    document.getElementById('ff-field-idx').value   = idx;
+    document.getElementById('ff-name').value         = f.label;
+    document.getElementById('ff-type').value         = f.type;
+    document.getElementById('ff-placeholder').value  = f.type !== 'select' ? (f.placeholder || '') : '';
+    const isSelect = f.type === 'select';
+    toggleSelectSection(isSelect);
+    if (isSelect && f.options?.source) {
+      document.getElementById('ff-list-source').value = f.options.source;
+      populateDefaultValues(f.options.source, f.placeholder);
+    }
+    openModal('modal-field');
+  }
+
+  async function deleteFieldLocal(idx) {
+    const f = allFields[idx];
+    if (!f?.custom) return;
+    if (!confirm(`Eliminar o campo "${f.label}"? Esta acção não pode ser desfeita.`)) return;
+    await deleteCustomField(f.id);
+    allFields.splice(idx, 1);
+    customFields = allFields.filter(x => x.custom);
+    renderFields();
+    updateOthersTabVisibility();
+  }
+
+  // Resetar modal ao abrir novo campo
+  document.querySelectorAll('[data-modal-open="modal-field"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelector('#modal-field .modal__title').textContent = 'Adicionar campo personalizado';
+      document.getElementById('ff-field-idx').value  = '';
+      document.getElementById('ff-name').value        = '';
+      document.getElementById('ff-type').value        = 'text';
+      document.getElementById('ff-placeholder').value = '';
+      toggleSelectSection(false);
+    });
+  });
+
+  document.getElementById('ff-type')?.addEventListener('change', function () {
+    const isSelect = this.value === 'select';
+    toggleSelectSection(isSelect);
+    if (isSelect) populateDefaultValues(document.getElementById('ff-list-source')?.value || 'status');
+  });
+
+  document.getElementById('ff-list-source')?.addEventListener('change', function () {
+    populateDefaultValues(this.value);
+  });
+
+  document.getElementById('form-field')?.addEventListener('submit', async e => {
     e.preventDefault();
-    const name = document.getElementById('ff-name').value.trim();
-    if (!name) { alert('Nome obrigatório.'); return; }
-    allFields.push({ key: name.toLowerCase().replace(/\s+/g,'_'), label: name, type: document.getElementById('ff-type').value, active: true, custom: true });
+    const idxEl = document.getElementById('ff-field-idx');
+    const idx   = idxEl?.value !== '' ? +idxEl.value : -1;
+    const name  = document.getElementById('ff-name').value.trim();
+    const type  = document.getElementById('ff-type').value;
+    if (!name) { alert('Nome do campo é obrigatório.'); return; }
+
+    const key = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+    const fieldData = { key, label: name, type, active: true, custom: true };
+
+    if (type === 'select') {
+      fieldData.options     = { source: document.getElementById('ff-list-source').value };
+      fieldData.placeholder = document.getElementById('ff-default-value').value;
+    } else {
+      fieldData.placeholder = document.getElementById('ff-placeholder').value.trim() || null;
+      fieldData.options     = null;
+    }
+
+    let existingId = null;
+    if (idx >= 0 && allFields[idx]?.custom) {
+      existingId         = allFields[idx].id;
+      fieldData.active   = allFields[idx].active;
+      fieldData.position = allFields[idx].position || 0;
+    }
+
+    const result = await saveCustomField(fieldData, existingId);
+    if (!result) return;
+
+    if (idx >= 0) {
+      allFields[idx] = { ...allFields[idx], ...fieldData, id: result.field?.id || existingId };
+    } else {
+      fieldData.id = result.field?.id;
+      allFields.push(fieldData);
+    }
+    customFields = allFields.filter(x => x.custom);
+    if (idxEl) idxEl.value = '';
     closeModal('modal-field');
     renderFields();
+    updateOthersTabVisibility();
   });
 
   document.querySelectorAll('.settings-nav__item').forEach(item => {
@@ -572,5 +784,6 @@
   loadLeads();
   renderUsers();
   renderFields();
+  loadCustomFields();
 
 })();

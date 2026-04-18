@@ -243,6 +243,7 @@
 <div class="modal-tabs">
 <button class="modal-tab active" data-modal-tab="info">Informação</button>
 <button class="modal-tab" data-modal-tab="comercial">Comercial</button>
+<button class="modal-tab" data-modal-tab="outros" id="tab-btn-outros" style="display:none">Outros</button>
 <button class="modal-tab" data-modal-tab="docs">Documentos</button>
 <button class="modal-tab" data-modal-tab="notas">Notas</button>
 </div>
@@ -292,6 +293,8 @@
 <div class="form-group"><label>Último Contacto</label><input id="f-data" name="ultimoContacto" type="date"/></div>
 <div class="form-group"><label>Próximo Follow-up</label><input id="f-followup" name="followup" type="date"/></div>
 </div>
+</div>
+<div class="modal-tab-panel" id="tab-outros">
 </div>
 <div class="modal-tab-panel" id="tab-docs">
 <div class="form-row full">
@@ -352,6 +355,7 @@
 <div class="modal">
 <h2 class="modal__title">Adicionar campo personalizado</h2>
 <form id="form-field" novalidate="">
+<input type="hidden" id="ff-field-idx" value=""/>
 <div class="form-row">
 <div class="form-group"><label>Nome do campo *</label><input id="ff-name" placeholder="Ex: Website, Morada…" type="text"/></div>
 <div class="form-group">
@@ -363,10 +367,24 @@
 <option value="number">Número</option>
 <option value="date">Data</option>
 <option value="textarea">Texto longo</option>
+<option value="select">Lista (Select)</option>
 </select>
 </div>
 </div>
-<div class="form-row full">
+<div class="form-row" id="ff-select-options" style="display:none">
+<div class="form-group">
+<label>Usar lista de</label>
+<select id="ff-list-source">
+<option value="status">Status</option>
+<option value="prioridades">Prioridades</option>
+</select>
+</div>
+<div class="form-group">
+<label>Valor padrão</label>
+<select id="ff-default-value"></select>
+</div>
+</div>
+<div class="form-row full" id="ff-placeholder-row">
 <div class="form-group"><label>Placeholder</label><input id="ff-placeholder" placeholder="Texto de exemplo…" type="text"/></div>
 </div>
 <div class="modal__footer">
