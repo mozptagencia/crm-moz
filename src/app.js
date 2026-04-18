@@ -11,6 +11,7 @@ const path    = require('path');
 const authRoutes     = require('./routes/auth');
 const contactRoutes  = require('./routes/contacts');
 const claudeRoutes   = require('./routes/claude');
+const settingsRoutes = require('./routes/settings');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/auth',     authRoutes);
 app.use('/api/leads',    contactRoutes);
 app.use('/api/claude',   claudeRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // ── HEALTH CHECK ──────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

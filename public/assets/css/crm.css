@@ -706,6 +706,7 @@
 .td-notes        { max-width: 180px; font-size: .78rem; }
 .pdf-notes-text  { font-size: 12px; line-height: 1.7; white-space: pre-wrap; }
 .btn--danger-lt  { background: #fce8e8; color: #a01010; border: none; cursor: pointer; }
+.t-ink           { color: var(--color-ink) !important; }
 
 /* ── FIXES VISIBILIDADE ──────────────────────────────────────── */
 .btn-logout {
