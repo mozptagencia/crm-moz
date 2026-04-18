@@ -49,6 +49,19 @@ CREATE TABLE IF NOT EXISTS interactions (
   created_at  TIMESTAMPTZ        NOT NULL DEFAULT NOW()
 );
 
+-- ── CAMPOS PERSONALIZADOS ────────────────────────────────────
+CREATE TABLE IF NOT EXISTS custom_fields (
+  id          SERIAL PRIMARY KEY,
+  key         VARCHAR(64)         NOT NULL UNIQUE,
+  label       VARCHAR(128)        NOT NULL,
+  type        VARCHAR(32)         NOT NULL DEFAULT 'text',  -- text | textarea | select | date | number
+  options     JSONB,                                         -- ex: {"source":"status"} ou {"source":"prioridades"}
+  placeholder VARCHAR(128),
+  active      BOOLEAN             NOT NULL DEFAULT TRUE,
+  position    INTEGER             NOT NULL DEFAULT 0,
+  created_at  TIMESTAMPTZ         NOT NULL DEFAULT NOW()
+);
+
 -- ── ÍNDICES ───────────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_contacts_status     ON contacts(status);
 CREATE INDEX IF NOT EXISTS idx_contacts_prioridade ON contacts(prioridade);
