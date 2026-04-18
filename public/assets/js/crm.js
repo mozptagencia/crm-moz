@@ -442,7 +442,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════
-     12. UTILIZADORES — settings (ainda local, BD depois)
+     12. UTILIZADORES — cria via API /auth/register
   ══════════════════════════════════════════════════════════ */
   function renderUsers() {
     const el = document.getElementById('users-list');
