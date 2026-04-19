@@ -119,6 +119,7 @@
       linkInterno:    l.link_interno,
       linkCliente:    l.link_cliente,
       notas:          l.notas,
+      customData:     l.custom_data || {},
     };
   }
 
@@ -570,7 +571,7 @@
       return;
     }
     panel.innerHTML = active.map(f => {
-      const val = (leadData && leadData[f.key]) ? leadData[f.key] : '';
+      const val = (leadData && leadData.customData && leadData.customData[f.key]) ? leadData.customData[f.key] : '';
       let input = '';
       if (f.type === 'textarea') {
         input = `<textarea id="fcustom-${f.key}" name="${f.key}" placeholder="${f.placeholder||''}">${val}</textarea>`;

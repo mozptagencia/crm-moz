@@ -56,6 +56,19 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Campos fixos conhecidos da tabela contacts
+const KNOWN_FIELDS = new Set([
+  'empresa','sector','localizacao','responsavel','email','telefone',
+  'status','prioridade','valor_estimado','canal_origem','ultimo_contacto',
+  'followup','link_interno','link_cliente','notas',
+]);
+
+function extractCustomData(body) {
+  const custom = {};
+  Object.keys(body).forEach(k => { if (!KNOWN_FIELDS.has(k)) custom[k] = body[k]; });
+  return Object.keys(custom).length ? JSON.stringify(custom) : null;
+}
+
 // ── CRIAR LEAD ────────────────────────────────────────────────
 router.post('/', async (req, res) => {
   try {
@@ -67,14 +80,16 @@ router.post('/', async (req, res) => {
 
     if (!empresa) return res.status(400).json({ error: 'Nome da empresa é obrigatório.' });
 
+    const custom_data = extractCustomData(req.body);
+
     const result = await pool.query(
       `INSERT INTO contacts
         (user_id, empresa, sector, localizacao, responsavel, email, telefone,
-         status, prioridade, valor_estimado, canal_origem, ultimo_contacto, followup, notas)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+         status, prioridade, valor_estimado, canal_origem, ultimo_contacto, followup, notas, custom_data)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
        RETURNING *`,
       [req.user.id, empresa, sector, localizacao, responsavel, email, telefone,
-       status, prioridade, valor_estimado, canal_origem, ultimo_contacto, followup, notas]
+       status, prioridade, valor_estimado, canal_origem, ultimo_contacto, followup, notas, custom_data]
     );
 
     res.status(201).json({ lead: result.rows[0] });
@@ -93,17 +108,20 @@ router.put('/:id', async (req, res) => {
       ultimo_contacto, followup, link_interno, link_cliente, notas
     } = req.body;
 
+    const custom_data = extractCustomData(req.body);
+
     const result = await pool.query(
       `UPDATE contacts SET
         empresa=$1, sector=$2, localizacao=$3, responsavel=$4, email=$5, telefone=$6,
         status=$7, prioridade=$8, valor_estimado=$9, canal_origem=$10,
-        ultimo_contacto=$11, followup=$12, link_interno=$13, link_cliente=$14, notas=$15
-       WHERE id=$16
+        ultimo_contacto=$11, followup=$12, link_interno=$13, link_cliente=$14, notas=$15,
+        custom_data=$16
+       WHERE id=$17
        RETURNING *`,
       [empresa, sector, localizacao, responsavel, email, telefone,
        status, prioridade, valor_estimado, canal_origem,
        ultimo_contacto, followup, link_interno, link_cliente, notas,
-       req.params.id]
+       custom_data, req.params.id]
     );
 
     if (!result.rows[0]) return res.status(404).json({ error: 'Lead não encontrado.' });

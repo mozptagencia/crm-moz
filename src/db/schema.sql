@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS contacts (
   link_interno   TEXT,
   link_cliente   TEXT,
   notas          TEXT,
+  custom_data    JSONB,
   created_at     TIMESTAMPTZ        NOT NULL DEFAULT NOW(),
   updated_at     TIMESTAMPTZ        NOT NULL DEFAULT NOW()
 );
