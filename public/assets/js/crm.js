@@ -56,9 +56,18 @@
   let leads        = [];
   let users        = [];
   let customFields = [];
+  let listItems    = {
+    status:      [
+      { value:'lead', label:'Lead' }, { value:'contactado', label:'Contactado' },
+      { value:'proposta', label:'Proposta Enviada' }, { value:'cliente', label:'Cliente' }, { value:'perdido', label:'Perdido' },
+    ],
+    prioridades: [
+      { value:'hot', label:'🔥 Alta (Hot)' }, { value:'media', label:'Média' }, { value:'cold', label:'❄️ Baixa (Cold)' },
+    ],
+  };
 
-  const statusLabels = { lead: 'Lead', contactado: 'Contactado', proposta: 'Proposta', cliente: 'Cliente', perdido: 'Perdido' };
-  const prioLabels   = { hot: '🔥 Hot', media: 'Média', cold: '❄️ Cold' };
+  function statusLabels(v) { return (listItems.status.find(i => i.value === v) || {}).label || v; }
+  function prioLabels(v)   { return (listItems.prioridades.find(i => i.value === v) || {}).label || v; }
 
   let filterStatus = 'todos';
   let filterPrio   = 'todos';
@@ -147,8 +156,8 @@
     return `
     <tr data-id="${l.id}">
       <td class="td-empresa">${l.empresa}<small>${[l.sector, l.localizacao].filter(Boolean).join(' · ')}</small></td>
-      <td><span class="status-badge status--${l.status}">${statusLabels[l.status]||l.status}</span></td>
-      <td><span class="priority-badge priority--${l.prioridade}">${prioLabels[l.prioridade]||l.prioridade}</span></td>
+      <td><span class="status-badge status--${l.status}">${statusLabels(l.status)}</span></td>
+      <td><span class="priority-badge priority--${l.prioridade}">${prioLabels(l.prioridade)}</span></td>
       <td>${l.valorEstimado||'—'}</td>
       <td>${fmtDate(l.ultimoContacto)}</td>
       <td>${l.canalOrigem||'—'}</td>
@@ -361,8 +370,8 @@
     </table>
     <div class="section">Comercial</div>
     <table>
-      <tr><td>Status</td><td>${statusLabels[l.status]||l.status}</td></tr>
-      <tr><td>Prioridade</td><td>${prioLabels[l.prioridade]||l.prioridade}</td></tr>
+      <tr><td>Status</td><td>${statusLabels(l.status)}</td></tr>
+      <tr><td>Prioridade</td><td>${prioLabels(l.prioridade)}</td></tr>
       <tr><td>Valor Estimado</td><td>${l.valorEstimado||'—'}</td></tr>
       <tr><td>Canal de Origem</td><td>${l.canalOrigem||'—'}</td></tr>
       <tr><td>Último Contacto</td><td>${fmtDate(l.ultimoContacto)}</td></tr>
@@ -570,13 +579,8 @@
   }
 
   function getOptionsForSource(source) {
-    if (source === 'status') return [
-      { value:'lead', label:'Lead' }, { value:'contactado', label:'Contactado' },
-      { value:'proposta', label:'Proposta Enviada' }, { value:'cliente', label:'Cliente' }, { value:'perdido', label:'Perdido' },
-    ];
-    if (source === 'prioridades') return [
-      { value:'hot', label:'🔥 Alta (Hot)' }, { value:'media', label:'Média' }, { value:'cold', label:'❄️ Baixa (Cold)' },
-    ];
+    if (source === 'status')      return listItems.status.map(i => ({ value: i.value, label: i.label }));
+    if (source === 'prioridades') return listItems.prioridades.map(i => ({ value: i.value, label: i.label }));
     return [];
   }
 
@@ -593,6 +597,41 @@
     sel.innerHTML = getOptionsForSource(source).map(o =>
       `<option value="${o.value}"${o.value === currentVal ? ' selected' : ''}>${o.label}</option>`
     ).join('');
+  }
+
+  async function loadLists() {
+    try {
+      const data = await api('/settings/lists');
+      if (data.lists.status?.length)      listItems.status      = data.lists.status;
+      if (data.lists.prioridades?.length) listItems.prioridades = data.lists.prioridades;
+      renderListSection('status',      document.getElementById('status-list'));
+      renderListSection('prioridades', document.getElementById('prio-list'));
+      refreshLeadStatusSelects();
+    } catch { /* usa valores por defeito */ }
+  }
+
+  function renderListSection(listName, el) {
+    if (!el) return;
+    const isAdmin = session.role === 'admin';
+    el.innerHTML = listItems[listName].map(item => `
+      <div class="field-item">
+        <span class="field-item__drag">⠿</span>
+        <span class="field-item__name">${item.label}</span>
+        <span class="field-item__type">${item.value}</span>
+        ${isAdmin ? `<div class="field-item__actions">
+          <button class="btn btn--sm btn--secondary t-ink" data-edit-list-item="${item.id}" data-list-name="${listName}">Editar</button>
+          <button class="btn btn--sm btn--danger-lt" data-delete-list-item="${item.id}" data-list-name="${listName}">✕</button>
+        </div>` : ''}
+      </div>`).join('');
+  }
+
+  function refreshLeadStatusSelects() {
+    const fStatus = document.getElementById('f-status');
+    const fPrio   = document.getElementById('f-prioridade');
+    if (fStatus) fStatus.innerHTML = listItems.status.map(i =>
+      `<option value="${i.value}">${i.label}</option>`).join('');
+    if (fPrio) fPrio.innerHTML = listItems.prioridades.map(i =>
+      `<option value="${i.value}">${i.label}</option>`).join('');
   }
 
   function updateOthersTabVisibility() {
@@ -798,7 +837,93 @@
       document.getElementById('settings-'+key)?.classList.add('active');
       if (key === 'users')  renderUsers();
       if (key === 'fields') renderFields();
+      if (key === 'status') {
+        renderListSection('status',      document.getElementById('status-list'));
+        renderListSection('prioridades', document.getElementById('prio-list'));
+      }
     });
+  });
+
+  // Abrir modal para adicionar item de lista
+  document.querySelectorAll('[data-add-list]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const listName = btn.dataset.addList;
+      document.getElementById('modal-list-item-title').textContent = 'Adicionar item';
+      document.getElementById('li-id').value    = '';
+      document.getElementById('li-list').value  = listName;
+      document.getElementById('li-value').value = '';
+      document.getElementById('li-label').value = '';
+      document.getElementById('li-value').disabled = false;
+      document.getElementById('li-delete-btn').style.display = 'none';
+      openModal('modal-list-item');
+    });
+  });
+
+  // Editar item de lista (delegação)
+  document.getElementById('status-list')?.addEventListener('click', handleListClick);
+  document.getElementById('prio-list')?.addEventListener('click', handleListClick);
+
+  function handleListClick(e) {
+    const editBtn = e.target.closest('[data-edit-list-item]');
+    const delBtn  = e.target.closest('[data-delete-list-item]');
+    if (editBtn) {
+      const listName = editBtn.dataset.listName;
+      const id       = editBtn.dataset.editListItem;
+      const item     = listItems[listName].find(i => String(i.id) === String(id));
+      if (!item) return;
+      document.getElementById('modal-list-item-title').textContent = 'Editar item';
+      document.getElementById('li-id').value    = item.id;
+      document.getElementById('li-list').value  = listName;
+      document.getElementById('li-value').value = item.value;
+      document.getElementById('li-label').value = item.label;
+      document.getElementById('li-value').disabled = true;
+      document.getElementById('li-delete-btn').style.display = '';
+      openModal('modal-list-item');
+    }
+    if (delBtn) {
+      const listName = delBtn.dataset.listName;
+      const id       = delBtn.dataset.deleteListItem;
+      if (!confirm('Eliminar este item?')) return;
+      api(`/settings/lists/${listName}/${id}`, { method: 'DELETE' })
+        .then(() => {
+          listItems[listName] = listItems[listName].filter(i => String(i.id) !== String(id));
+          renderListSection(listName, document.getElementById(listName === 'status' ? 'status-list' : 'prio-list'));
+        })
+        .catch(err => alert('Erro: ' + err.message));
+    }
+  }
+
+  document.getElementById('li-delete-btn')?.addEventListener('click', async () => {
+    const id       = document.getElementById('li-id').value;
+    const listName = document.getElementById('li-list').value;
+    if (!id || !confirm('Eliminar este item?')) return;
+    try {
+      await api(`/settings/lists/${listName}/${id}`, { method: 'DELETE' });
+      listItems[listName] = listItems[listName].filter(i => String(i.id) !== String(id));
+      renderListSection(listName, document.getElementById(listName === 'status' ? 'status-list' : 'prio-list'));
+      closeModal('modal-list-item');
+    } catch (err) { alert('Erro: ' + err.message); }
+  });
+
+  document.getElementById('form-list-item')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const id       = document.getElementById('li-id').value;
+    const listName = document.getElementById('li-list').value;
+    const value    = document.getElementById('li-value').value.trim();
+    const label    = document.getElementById('li-label').value.trim();
+    if (!label || (!id && !value)) { alert('Preenche todos os campos.'); return; }
+    try {
+      if (id) {
+        const res = await api(`/settings/lists/${listName}/${id}`, { method: 'PUT', body: { label } });
+        const idx = listItems[listName].findIndex(i => String(i.id) === String(id));
+        if (idx >= 0) listItems[listName][idx] = res.item;
+      } else {
+        const res = await api(`/settings/lists/${listName}`, { method: 'POST', body: { value, label } });
+        listItems[listName].push(res.item);
+      }
+      renderListSection(listName, document.getElementById(listName === 'status' ? 'status-list' : 'prio-list'));
+      closeModal('modal-list-item');
+    } catch (err) { alert('Erro: ' + err.message); }
   });
 
   /* ══════════════════════════════════════════════════════════
@@ -834,6 +959,7 @@
   ══════════════════════════════════════════════════════════ */
   loadLeads();
   loadUsers();
+  loadLists();
   renderFields();
   loadCustomFields();
 

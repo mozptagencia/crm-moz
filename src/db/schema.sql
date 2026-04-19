@@ -50,6 +50,28 @@ CREATE TABLE IF NOT EXISTS interactions (
   created_at  TIMESTAMPTZ        NOT NULL DEFAULT NOW()
 );
 
+-- ── LISTAS CONFIGURÁVEIS (status, prioridades) ───────────────
+CREATE TABLE IF NOT EXISTS list_items (
+  id        SERIAL PRIMARY KEY,
+  list_name VARCHAR(32)  NOT NULL,              -- 'status' | 'prioridades'
+  value     VARCHAR(64)  NOT NULL,
+  label     VARCHAR(128) NOT NULL,
+  position  INTEGER      NOT NULL DEFAULT 0,
+  UNIQUE(list_name, value)
+);
+
+-- Valores por defeito
+INSERT INTO list_items (list_name, value, label, position) VALUES
+  ('status', 'lead',        'Lead',              0),
+  ('status', 'contactado',  'Contactado',        1),
+  ('status', 'proposta',    'Proposta Enviada',  2),
+  ('status', 'cliente',     'Cliente',           3),
+  ('status', 'perdido',     'Perdido',           4),
+  ('prioridades', 'hot',   '🔥 Alta (Hot)',      0),
+  ('prioridades', 'media', 'Média',              1),
+  ('prioridades', 'cold',  '❄️ Baixa (Cold)',    2)
+ON CONFLICT (list_name, value) DO NOTHING;
+
 -- ── CAMPOS PERSONALIZADOS ────────────────────────────────────
 CREATE TABLE IF NOT EXISTS custom_fields (
   id          SERIAL PRIMARY KEY,

@@ -83,4 +83,65 @@ router.delete('/fields/:id', adminOnly, async (req, res) => {
   }
 });
 
+// ── LISTAS (status / prioridades) ─────────────────────────────
+router.get('/lists', async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM list_items ORDER BY list_name, position ASC, id ASC"
+    );
+    const lists = { status: [], prioridades: [] };
+    result.rows.forEach(r => { if (lists[r.list_name]) lists[r.list_name].push(r); });
+    res.json({ lists });
+  } catch (err) {
+    console.error('Erro ao listar listas:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+router.post('/lists/:name', adminOnly, async (req, res) => {
+  const { name } = req.params;
+  if (!['status', 'prioridades'].includes(name)) {
+    return res.status(400).json({ error: 'Lista inválida.' });
+  }
+  try {
+    const { value, label, position = 0 } = req.body;
+    if (!value || !label) return res.status(400).json({ error: 'value e label são obrigatórios.' });
+    const result = await pool.query(
+      'INSERT INTO list_items (list_name, value, label, position) VALUES ($1,$2,$3,$4) RETURNING *',
+      [name, value, label, position]
+    );
+    res.status(201).json({ item: result.rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'Já existe um item com esse valor.' });
+    console.error('Erro ao criar item:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+router.put('/lists/:name/:id', adminOnly, async (req, res) => {
+  try {
+    const { label, position = 0 } = req.body;
+    if (!label) return res.status(400).json({ error: 'label é obrigatório.' });
+    const result = await pool.query(
+      'UPDATE list_items SET label=$1, position=$2 WHERE id=$3 AND list_name=$4 RETURNING *',
+      [label, position, req.params.id, req.params.name]
+    );
+    if (!result.rows[0]) return res.status(404).json({ error: 'Item não encontrado.' });
+    res.json({ item: result.rows[0] });
+  } catch (err) {
+    console.error('Erro ao editar item:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+router.delete('/lists/:name/:id', adminOnly, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM list_items WHERE id=$1 AND list_name=$2', [req.params.id, req.params.name]);
+    res.json({ message: 'Item eliminado.' });
+  } catch (err) {
+    console.error('Erro ao eliminar item:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
 module.exports = router;
