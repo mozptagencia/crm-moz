@@ -54,7 +54,7 @@
      2. ESTADO LOCAL
   ══════════════════════════════════════════════════════════ */
   let leads        = [];
-  let users        = [{ id: session.id, nome: session.nome || session.name, email: session.email, role: session.role }];
+  let users        = [];
   let customFields = [];
 
   const statusLabels = { lead: 'Lead', contactado: 'Contactado', proposta: 'Proposta', cliente: 'Cliente', perdido: 'Perdido' };
@@ -486,6 +486,7 @@
     try {
       await api('/auth/register', { method: 'POST', body: { name: nome, email, password: pwd, role } });
       closeModal('modal-user');
+      await loadUsers();
       alert('Utilizador criado com sucesso.');
     } catch (err) {
       alert('Erro: ' + err.message);
@@ -584,6 +585,17 @@
     }).join('');
   }
 
+  async function loadUsers() {
+    if (session.role !== 'admin') return;
+    try {
+      const data = await api('/auth/users');
+      users = (data.users || []).map(u => ({
+        id: u.id, nome: u.name, email: u.email, role: u.role,
+      }));
+      renderUsers();
+    } catch { /* sem permissão ou API indisponível */ }
+  }
+
   async function loadCustomFields() {
     try {
       const data = await api('/settings/fields');
@@ -599,14 +611,14 @@
   }
 
   async function saveCustomField(fieldData, existingId) {
-    if (!token) return { field: { ...fieldData } };
+    if (!token) { alert('Sessão expirada. Faz login novamente.'); return null; }
     const method = existingId ? 'PUT' : 'POST';
     const path   = existingId ? `/settings/fields/${existingId}` : '/settings/fields';
     try {
       return await api(path, { method, body: fieldData });
     } catch (err) {
-      if (err.message.includes('500')) { alert('Erro ao guardar campo: ' + err.message); return null; }
-      return { field: { ...fieldData } };
+      alert('Erro ao guardar campo: ' + err.message);
+      return null;
     }
   }
 
@@ -782,7 +794,7 @@
      16. INIT
   ══════════════════════════════════════════════════════════ */
   loadLeads();
-  renderUsers();
+  loadUsers();
   renderFields();
   loadCustomFields();
 

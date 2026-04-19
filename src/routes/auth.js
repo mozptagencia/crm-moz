@@ -82,6 +82,22 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ── LISTAR UTILIZADORES (admin) ───────────────────────────────
+router.get('/users', auth, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Acesso reservado a administradores.' });
+  }
+  try {
+    const result = await pool.query(
+      'SELECT id, name, email, role, created_at FROM users ORDER BY id ASC'
+    );
+    res.json({ users: result.rows });
+  } catch (err) {
+    console.error('Erro ao listar utilizadores:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
 // ── DADOS DO UTILIZADOR ACTUAL ────────────────────────────────
 router.get('/me', auth, async (req, res) => {
   try {
