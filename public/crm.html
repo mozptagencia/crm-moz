@@ -170,19 +170,14 @@
 </div>
 <!-- Status -->
 <div class="settings-section" id="settings-status">
-<h3 class="settings-section__title">Status &amp; Prioridades</h3>
-<p class="settings-section__sub">Personaliza os rótulos dos status e das prioridades das leads.</p>
-<div class="settings-section__header">
-  <h4 class="settings-h4">Status</h4>
-  <button class="btn btn--primary btn--sm" data-add-list="status">+ Adicionar</button>
-</div>
-<div class="fields-list" id="status-list"></div>
+<h3 class="settings-section__title">Status, Prioridades e Listas</h3>
+<p class="settings-section__sub">Personaliza os rótulos, cores e valores. Cria listas novas para usar nos campos personalizados.</p>
+<div id="all-lists-container"></div>
 <div class="settings-divider"></div>
-<div class="settings-section__header">
-  <h4 class="settings-h4">Prioridades</h4>
-  <button class="btn btn--primary btn--sm" data-add-list="prioridades">+ Adicionar</button>
+<div class="settings-section__header" style="margin-top:.5rem">
+  <h4 class="settings-h4" style="margin:0">Criar nova lista</h4>
+  <button class="btn btn--primary btn--sm" data-modal-open="modal-new-list">+ Nova lista</button>
 </div>
-<div class="fields-list" id="prio-list"></div>
 </div>
 <!-- Templates -->
 <div class="settings-section" id="settings-docs">
@@ -264,21 +259,11 @@
 <div class="form-row">
 <div class="form-group">
 <label>Status</label>
-<select id="f-status" name="status">
-<option value="lead">Lead</option>
-<option value="contactado">Contactado</option>
-<option value="proposta">Proposta Enviada</option>
-<option value="cliente">Cliente</option>
-<option value="perdido">Perdido</option>
-</select>
+<select id="f-status" name="status"></select>
 </div>
 <div class="form-group">
 <label>Prioridade</label>
-<select id="f-prio" name="prioridade">
-<option value="hot">🔥 Alta (Hot)</option>
-<option selected="" value="media">Média</option>
-<option value="cold">❄️ Baixa (Cold)</option>
-</select>
+<select id="f-prio" name="prioridade"></select>
 </div>
 </div>
 <div class="form-row">
@@ -354,14 +339,37 @@
 <form id="form-list-item" novalidate="">
 <input id="li-id" type="hidden"/>
 <input id="li-list" type="hidden"/>
+<input id="li-color" type="hidden"/>
 <div class="form-row">
-<div class="form-group"><label>Valor interno *<small style="display:block;color:var(--color-ink-light);font-size:.75rem">Sem espaços, ex: em_negociacao</small></label><input id="li-value" placeholder="ex: em_negociacao" type="text"/></div>
+<div class="form-group"><label>Valor interno *<small style="display:block;color:var(--color-muted);font-size:.75rem">Sem espaços, ex: em_negociacao</small></label><input id="li-value" placeholder="ex: em_negociacao" type="text"/></div>
 <div class="form-group"><label>Etiqueta *</label><input id="li-label" placeholder="ex: Em Negociação" type="text"/></div>
+</div>
+<div class="form-row full">
+<div class="form-group">
+<label>Cor da etiqueta</label>
+<div id="li-color-picker" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem"></div>
+</div>
 </div>
 <div class="modal__footer">
 <button class="btn btn--danger-lt" id="li-delete-btn" type="button" style="display:none;margin-right:auto">Eliminar</button>
 <button class="btn btn--secondary t-ink" data-modal-close="modal-list-item" type="button">Cancelar</button>
 <button class="btn btn--primary" type="submit">Guardar</button>
+</div>
+</form>
+</div>
+</div>
+<!-- ═══ MODAL: NOVA LISTA ═════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-new-list">
+<div class="modal">
+<h2 class="modal__title">Nova lista</h2>
+<form id="form-new-list" novalidate="">
+<div class="form-row">
+<div class="form-group"><label>Nome interno *<small style="display:block;color:var(--color-muted);font-size:.75rem">Sem espaços, ex: tipo_cliente</small></label><input id="nl-name" placeholder="ex: tipo_cliente" type="text"/></div>
+<div class="form-group"><label>Etiqueta *</label><input id="nl-label" placeholder="ex: Tipo de Cliente" type="text"/></div>
+</div>
+<div class="modal__footer">
+<button class="btn btn--secondary t-ink" data-modal-close="modal-new-list" type="button">Cancelar</button>
+<button class="btn btn--primary" type="submit">Criar lista</button>
 </div>
 </form>
 </div>

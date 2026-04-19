@@ -708,6 +708,18 @@
 .btn--danger-lt  { background: #fce8e8; color: #a01010; border: none; cursor: pointer; }
 .t-ink           { color: var(--color-ink) !important; }
 
+/* ── COLOR PICKER ────────────────────────────────────────────── */
+.color-swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+  flex-shrink: 0;
+}
+.color-swatch:hover   { transform: scale(1.15); }
+.color-swatch.selected { border-color: var(--color-ink); transform: scale(1.15); }
+
 /* ── FIXES VISIBILIDADE ──────────────────────────────────────── */
 .btn-logout {
   color: rgba(255,255,255,.75) !important;

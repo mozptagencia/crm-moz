@@ -69,6 +69,24 @@
   function statusLabels(v) { return (listItems.status.find(i => i.value === v) || {}).label || v; }
   function prioLabels(v)   { return (listItems.prioridades.find(i => i.value === v) || {}).label || v; }
 
+  const LIST_COLORS = [
+    { name: 'cinza',    hex: '#9ca3af' },
+    { name: 'teal',     hex: '#328d97' },
+    { name: 'verde',    hex: '#22a05a' },
+    { name: 'amarelo',  hex: '#ffba08' },
+    { name: 'laranja',  hex: '#fb7f33' },
+    { name: 'vermelho', hex: '#e53e3e' },
+    { name: 'azul',     hex: '#3b82f6' },
+    { name: 'roxo',     hex: '#8b5cf6' },
+    { name: 'magenta',  hex: '#b72d6a' },
+  ];
+
+  function badgeStyle(color) {
+    if (!color) return '';
+    const hex = color.startsWith('#') ? color : (LIST_COLORS.find(c => c.name === color)?.hex || color);
+    return `background:${hex}22;color:${hex};border:1px solid ${hex}55`;
+  }
+
   let filterStatus = 'todos';
   let filterPrio   = 'todos';
   let filterSearch = '';
@@ -156,8 +174,8 @@
     return `
     <tr data-id="${l.id}">
       <td class="td-empresa">${l.empresa}<small>${[l.sector, l.localizacao].filter(Boolean).join(' · ')}</small></td>
-      <td><span class="status-badge status--${l.status}">${statusLabels(l.status)}</span></td>
-      <td><span class="priority-badge priority--${l.prioridade}">${prioLabels(l.prioridade)}</span></td>
+      <td><span class="status-badge status--${l.status}" style="${badgeStyle((listItems.status.find(i=>i.value===l.status)||{}).color)}">${statusLabels(l.status)}</span></td>
+      <td><span class="priority-badge priority--${l.prioridade}" style="${badgeStyle((listItems.prioridades.find(i=>i.value===l.prioridade)||{}).color)}">${prioLabels(l.prioridade)}</span></td>
       <td>${l.valorEstimado||'—'}</td>
       <td>${fmtDate(l.ultimoContacto)}</td>
       <td>${l.canalOrigem||'—'}</td>
@@ -579,9 +597,14 @@
   }
 
   function getOptionsForSource(source) {
-    if (source === 'status')      return listItems.status.map(i => ({ value: i.value, label: i.label }));
-    if (source === 'prioridades') return listItems.prioridades.map(i => ({ value: i.value, label: i.label }));
+    if (listItems[source]) return listItems[source].map(i => ({ value: i.value, label: i.label }));
     return [];
+  }
+
+  function refreshListSourceSelect() {
+    const sel = document.getElementById('ff-list-source');
+    if (!sel) return;
+    sel.innerHTML = listsMeta.map(l => `<option value="${l.name}">${l.label}</option>`).join('');
   }
 
   function toggleSelectSection(show) {
@@ -599,39 +622,153 @@
     ).join('');
   }
 
+  let listsMeta = []; // [{name, label}, ...]
+
   async function loadLists() {
     try {
       const data = await api('/settings/lists');
-      if (data.lists.status?.length)      listItems.status      = data.lists.status;
-      if (data.lists.prioridades?.length) listItems.prioridades = data.lists.prioridades;
-      renderListSection('status',      document.getElementById('status-list'));
-      renderListSection('prioridades', document.getElementById('prio-list'));
+      listsMeta = data.meta || [];
+      Object.keys(data.lists).forEach(name => {
+        if (data.lists[name].length) listItems[name] = data.lists[name];
+      });
       refreshLeadStatusSelects();
-    } catch { /* usa valores por defeito */ }
-  }
-
-  function renderListSection(listName, el) {
-    if (!el) return;
-    const isAdmin = session.role === 'admin';
-    el.innerHTML = listItems[listName].map(item => `
-      <div class="field-item">
-        <span class="field-item__drag">⠿</span>
-        <span class="field-item__name">${item.label}</span>
-        <span class="field-item__type">${item.value}</span>
-        ${isAdmin ? `<div class="field-item__actions">
-          <button class="btn btn--sm btn--secondary t-ink" data-edit-list-item="${item.id}" data-list-name="${listName}">Editar</button>
-          <button class="btn btn--sm btn--danger-lt" data-delete-list-item="${item.id}" data-list-name="${listName}">✕</button>
-        </div>` : ''}
-      </div>`).join('');
+      refreshListSourceSelect();
+      renderAllListSections();
+    } catch { refreshLeadStatusSelects(); }
   }
 
   function refreshLeadStatusSelects() {
     const fStatus = document.getElementById('f-status');
-    const fPrio   = document.getElementById('f-prioridade');
+    const fPrio   = document.getElementById('f-prio');
     if (fStatus) fStatus.innerHTML = listItems.status.map(i =>
       `<option value="${i.value}">${i.label}</option>`).join('');
     if (fPrio) fPrio.innerHTML = listItems.prioridades.map(i =>
       `<option value="${i.value}">${i.label}</option>`).join('');
+  }
+
+  function renderAllListSections() {
+    const container = document.getElementById('all-lists-container');
+    if (!container) return;
+    const isAdmin = session.role === 'admin';
+    container.innerHTML = listsMeta.map((meta, mIdx) => {
+      const items = listItems[meta.name] || [];
+      const isSystem = ['status', 'prioridades'].includes(meta.name);
+      return `
+        <div style="margin-bottom:1.5rem">
+          <div class="settings-section__header">
+            <h4 class="settings-h4">${meta.label}</h4>
+            ${isAdmin ? `<div style="display:flex;gap:.5rem">
+              <button class="btn btn--primary btn--sm" data-add-list="${meta.name}">+ Adicionar</button>
+              ${!isSystem ? `<button class="btn btn--danger-lt btn--sm" data-delete-list="${meta.name}">Eliminar lista</button>` : ''}
+            </div>` : ''}
+          </div>
+          <div class="fields-list" id="list-section-${meta.name}">
+            ${items.map(item => renderListItemRow(item, meta.name, isAdmin)).join('')}
+          </div>
+        </div>
+        ${mIdx < listsMeta.length - 1 ? '<div class="settings-divider"></div>' : ''}`;
+    }).join('');
+    attachListSectionEvents();
+  }
+
+  function renderListItemRow(item, listName, isAdmin) {
+    const style = item.color ? badgeStyle(item.color) : '';
+    const swatch = item.color ? `<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${item.color.startsWith('#') ? item.color : (LIST_COLORS.find(c=>c.name===item.color)?.hex||item.color)};margin-right:.35rem;vertical-align:middle"></span>` : '';
+    return `
+      <div class="field-item">
+        <span class="field-item__drag">⠿</span>
+        <span class="field-item__name"><span class="status-badge" style="${style}">${swatch}${item.label}</span></span>
+        <span class="field-item__type t-muted">${item.value}</span>
+        ${isAdmin ? `<div class="field-item__actions">
+          <button class="btn btn--sm btn--secondary t-ink" data-edit-list-item="${item.id}" data-list-name="${listName}">Editar</button>
+          <button class="btn btn--sm btn--danger-lt" data-delete-list-item="${item.id}" data-list-name="${listName}">✕</button>
+        </div>` : ''}
+      </div>`;
+  }
+
+  function renderSingleListSection(listName) {
+    const el = document.getElementById('list-section-' + listName);
+    if (!el) return;
+    const isAdmin = session.role === 'admin';
+    el.innerHTML = (listItems[listName] || []).map(item => renderListItemRow(item, listName, isAdmin)).join('');
+    attachListSectionEvents();
+  }
+
+  function buildColorPicker(selectedColor) {
+    const el = document.getElementById('li-color-picker');
+    if (!el) return;
+    el.innerHTML = LIST_COLORS.map(c => `
+      <div class="color-swatch${selectedColor === c.hex ? ' selected' : ''}"
+           style="background:${c.hex}"
+           title="${c.name}"
+           data-color="${c.hex}"></div>`).join('');
+    el.querySelectorAll('.color-swatch').forEach(sw => {
+      sw.addEventListener('click', () => {
+        el.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+        sw.classList.add('selected');
+        document.getElementById('li-color').value = sw.dataset.color;
+      });
+    });
+  }
+
+  function attachListSectionEvents() {
+    document.querySelectorAll('[data-edit-list-item]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const listName = btn.dataset.listName;
+        const id       = btn.dataset.editListItem;
+        const item     = (listItems[listName] || []).find(i => String(i.id) === String(id));
+        if (!item) return;
+        document.getElementById('modal-list-item-title').textContent = 'Editar item';
+        document.getElementById('li-id').value    = item.id;
+        document.getElementById('li-list').value  = listName;
+        document.getElementById('li-value').value = item.value;
+        document.getElementById('li-label').value = item.label;
+        document.getElementById('li-color').value = item.color || '';
+        document.getElementById('li-value').disabled = true;
+        document.getElementById('li-delete-btn').style.display = '';
+        buildColorPicker(item.color || '');
+        openModal('modal-list-item');
+      });
+    });
+    document.querySelectorAll('[data-delete-list-item]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const listName = btn.dataset.listName;
+        const id       = btn.dataset.deleteListItem;
+        if (!confirm('Eliminar este item?')) return;
+        try {
+          await api(`/settings/lists/${listName}/${id}`, { method: 'DELETE' });
+          listItems[listName] = (listItems[listName] || []).filter(i => String(i.id) !== String(id));
+          renderSingleListSection(listName);
+        } catch (err) { alert('Erro: ' + err.message); }
+      });
+    });
+    document.querySelectorAll('[data-add-list]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const listName = btn.dataset.addList;
+        document.getElementById('modal-list-item-title').textContent = 'Adicionar item';
+        document.getElementById('li-id').value    = '';
+        document.getElementById('li-list').value  = listName;
+        document.getElementById('li-value').value = '';
+        document.getElementById('li-label').value = '';
+        document.getElementById('li-color').value = '';
+        document.getElementById('li-value').disabled = false;
+        document.getElementById('li-delete-btn').style.display = 'none';
+        buildColorPicker('');
+        openModal('modal-list-item');
+      });
+    });
+    document.querySelectorAll('[data-delete-list]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const name = btn.dataset.deleteList;
+        if (!confirm(`Eliminar a lista "${name}" e todos os seus itens?`)) return;
+        try {
+          await api(`/settings/lists-meta/${name}`, { method: 'DELETE' });
+          listsMeta = listsMeta.filter(l => l.name !== name);
+          delete listItems[name];
+          renderAllListSections();
+        } catch (err) { alert('Erro: ' + err.message); }
+      });
+    });
   }
 
   function updateOthersTabVisibility() {
@@ -717,10 +854,10 @@
           <input type="checkbox" ${f.active ? 'checked' : ''} data-field-toggle="${i}">
           <div class="toggle-track"></div>
         </label>
-        ${f.custom ? `
+        ${session.role === 'admin' ? `
         <div class="field-item__actions">
           <button class="btn btn--sm btn--secondary t-ink" data-edit-field="${i}">Editar</button>
-          <button class="btn btn--sm btn--danger-lt" data-delete-field="${i}">✕</button>
+          ${f.custom ? `<button class="btn btn--sm btn--danger-lt" data-delete-field="${i}">✕</button>` : ''}
         </div>` : ''}
       </div>`).join('');
 
@@ -728,7 +865,8 @@
       cb.addEventListener('change', () => {
         const f = allFields[+cb.dataset.fieldToggle];
         f.active = cb.checked;
-        if (f.custom && f.id && token) api(`/settings/fields/${f.id}`, { method:'PUT', body:f }).catch(()=>{});
+        if (f.id && token) api(`/settings/fields/${f.id}`, { method:'PUT', body:{ label:f.label, type:f.type, options:f.options, placeholder:f.placeholder, active:f.active, position:f.position||0 } }).catch(()=>{});
+        else if (f.system && token) api('/settings/fields', { method:'POST', body:{ key:f.key, label:f.label, type:f.type, active:f.active, system:true } }).catch(()=>{});
         updateOthersTabVisibility();
       });
     });
@@ -738,12 +876,15 @@
 
   function openEditField(idx) {
     const f = allFields[idx];
-    if (!f?.custom) return;
+    if (!f) return;
     document.querySelector('#modal-field .modal__title').textContent = 'Editar campo';
     document.getElementById('ff-field-idx').value   = idx;
     document.getElementById('ff-name').value         = f.label;
     document.getElementById('ff-type').value         = f.type;
     document.getElementById('ff-placeholder').value  = f.type !== 'select' ? (f.placeholder || '') : '';
+    // Campo de sistema: desactivar chave (não editável)
+    const keyInput = document.getElementById('ff-key');
+    if (keyInput) { keyInput.value = f.key; keyInput.disabled = !!f.system; }
     const isSelect = f.type === 'select';
     toggleSelectSection(isSelect);
     if (isSelect && f.options?.source) {
@@ -806,19 +947,32 @@
     }
 
     let existingId = null;
+    const isSystemField = idx >= 0 && allFields[idx]?.system;
+
     if (idx >= 0 && allFields[idx]?.custom) {
       existingId         = allFields[idx].id;
       fieldData.active   = allFields[idx].active;
       fieldData.position = allFields[idx].position || 0;
+    } else if (isSystemField) {
+      // Campo de sistema: upsert com POST (ON CONFLICT DO UPDATE no backend)
+      fieldData.key    = allFields[idx].key;
+      fieldData.system = true;
+      fieldData.active = allFields[idx].active;
     }
 
-    const result = await saveCustomField(fieldData, existingId);
+    let result;
+    if (isSystemField && !allFields[idx]?.id) {
+      result = await saveCustomField(fieldData, null);
+    } else {
+      result = await saveCustomField(fieldData, existingId);
+    }
     if (!result) return;
 
     if (idx >= 0) {
       allFields[idx] = { ...allFields[idx], ...fieldData, id: result.field?.id || existingId };
     } else {
-      fieldData.id = result.field?.id;
+      fieldData.id     = result.field?.id;
+      fieldData.custom = true;
       allFields.push(fieldData);
     }
     customFields = allFields.filter(x => x.custom);
@@ -837,92 +991,63 @@
       document.getElementById('settings-'+key)?.classList.add('active');
       if (key === 'users')  renderUsers();
       if (key === 'fields') renderFields();
-      if (key === 'status') {
-        renderListSection('status',      document.getElementById('status-list'));
-        renderListSection('prioridades', document.getElementById('prio-list'));
-      }
+      if (key === 'status') renderAllListSections();
     });
   });
 
-  // Abrir modal para adicionar item de lista
-  document.querySelectorAll('[data-add-list]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const listName = btn.dataset.addList;
-      document.getElementById('modal-list-item-title').textContent = 'Adicionar item';
-      document.getElementById('li-id').value    = '';
-      document.getElementById('li-list').value  = listName;
-      document.getElementById('li-value').value = '';
-      document.getElementById('li-label').value = '';
-      document.getElementById('li-value').disabled = false;
-      document.getElementById('li-delete-btn').style.display = 'none';
-      openModal('modal-list-item');
-    });
-  });
-
-  // Editar item de lista (delegação)
-  document.getElementById('status-list')?.addEventListener('click', handleListClick);
-  document.getElementById('prio-list')?.addEventListener('click', handleListClick);
-
-  function handleListClick(e) {
-    const editBtn = e.target.closest('[data-edit-list-item]');
-    const delBtn  = e.target.closest('[data-delete-list-item]');
-    if (editBtn) {
-      const listName = editBtn.dataset.listName;
-      const id       = editBtn.dataset.editListItem;
-      const item     = listItems[listName].find(i => String(i.id) === String(id));
-      if (!item) return;
-      document.getElementById('modal-list-item-title').textContent = 'Editar item';
-      document.getElementById('li-id').value    = item.id;
-      document.getElementById('li-list').value  = listName;
-      document.getElementById('li-value').value = item.value;
-      document.getElementById('li-label').value = item.label;
-      document.getElementById('li-value').disabled = true;
-      document.getElementById('li-delete-btn').style.display = '';
-      openModal('modal-list-item');
-    }
-    if (delBtn) {
-      const listName = delBtn.dataset.listName;
-      const id       = delBtn.dataset.deleteListItem;
-      if (!confirm('Eliminar este item?')) return;
-      api(`/settings/lists/${listName}/${id}`, { method: 'DELETE' })
-        .then(() => {
-          listItems[listName] = listItems[listName].filter(i => String(i.id) !== String(id));
-          renderListSection(listName, document.getElementById(listName === 'status' ? 'status-list' : 'prio-list'));
-        })
-        .catch(err => alert('Erro: ' + err.message));
-    }
-  }
-
-  document.getElementById('li-delete-btn')?.addEventListener('click', async () => {
-    const id       = document.getElementById('li-id').value;
-    const listName = document.getElementById('li-list').value;
-    if (!id || !confirm('Eliminar este item?')) return;
-    try {
-      await api(`/settings/lists/${listName}/${id}`, { method: 'DELETE' });
-      listItems[listName] = listItems[listName].filter(i => String(i.id) !== String(id));
-      renderListSection(listName, document.getElementById(listName === 'status' ? 'status-list' : 'prio-list'));
-      closeModal('modal-list-item');
-    } catch (err) { alert('Erro: ' + err.message); }
-  });
-
+  // Submit: criar / editar item de lista
   document.getElementById('form-list-item')?.addEventListener('submit', async e => {
     e.preventDefault();
     const id       = document.getElementById('li-id').value;
     const listName = document.getElementById('li-list').value;
     const value    = document.getElementById('li-value').value.trim();
     const label    = document.getElementById('li-label').value.trim();
+    const color    = document.getElementById('li-color').value || null;
     if (!label || (!id && !value)) { alert('Preenche todos os campos.'); return; }
     try {
       if (id) {
-        const res = await api(`/settings/lists/${listName}/${id}`, { method: 'PUT', body: { label } });
-        const idx = listItems[listName].findIndex(i => String(i.id) === String(id));
+        const res = await api(`/settings/lists/${listName}/${id}`, { method: 'PUT', body: { label, color } });
+        const idx = (listItems[listName] || []).findIndex(i => String(i.id) === String(id));
         if (idx >= 0) listItems[listName][idx] = res.item;
       } else {
-        const res = await api(`/settings/lists/${listName}`, { method: 'POST', body: { value, label } });
+        const res = await api(`/settings/lists/${listName}`, { method: 'POST', body: { value, label, color } });
+        if (!listItems[listName]) listItems[listName] = [];
         listItems[listName].push(res.item);
       }
-      renderListSection(listName, document.getElementById(listName === 'status' ? 'status-list' : 'prio-list'));
+      renderSingleListSection(listName);
+      refreshLeadStatusSelects();
       closeModal('modal-list-item');
+    } catch (err) { alert('Erro: ' + err.message); }
+  });
+
+  // Delete a partir do modal
+  document.getElementById('li-delete-btn')?.addEventListener('click', async () => {
+    const id       = document.getElementById('li-id').value;
+    const listName = document.getElementById('li-list').value;
+    if (!id || !confirm('Eliminar este item?')) return;
+    try {
+      await api(`/settings/lists/${listName}/${id}`, { method: 'DELETE' });
+      listItems[listName] = (listItems[listName] || []).filter(i => String(i.id) !== String(id));
+      renderSingleListSection(listName);
+      refreshLeadStatusSelects();
+      closeModal('modal-list-item');
+    } catch (err) { alert('Erro: ' + err.message); }
+  });
+
+  // Submit: criar nova lista
+  document.getElementById('form-new-list')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const name  = document.getElementById('nl-name').value.trim();
+    const label = document.getElementById('nl-label').value.trim();
+    if (!name || !label) { alert('Preenche todos os campos.'); return; }
+    try {
+      const res = await api('/settings/lists-meta', { method: 'POST', body: { name, label } });
+      listsMeta.push(res.list);
+      listItems[res.list.name] = [];
+      closeModal('modal-new-list');
+      document.getElementById('nl-name').value  = '';
+      document.getElementById('nl-label').value = '';
+      renderAllListSections();
     } catch (err) { alert('Erro: ' + err.message); }
   });
 
