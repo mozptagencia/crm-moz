@@ -472,7 +472,7 @@
         <div class="user-row__info"><div class="user-row__name">${u.nome}</div><div class="user-row__email">${u.email}</div></div>
         <span class="user-row__role-badge ${roleClass[u.role]||'role--viewer'}">${roleLabel[u.role]||u.role}</span>
         <div class="user-row__actions">
-          <button class="btn btn--sm btn--secondary" data-edit-user="${u.id}">Editar</button>
+          <button class="btn btn--sm btn--secondary t-ink" data-edit-user="${u.id}">Editar</button>
         </div>
       </div>`).join('');
   }
@@ -527,7 +527,7 @@
     document.getElementById('fu-role').value  = u.role;
     document.getElementById('fu-pwd-label').textContent = 'Palavra-passe (deixa em branco para não alterar)';
     document.getElementById('fu-delete-btn').style.display = String(u.id) === String(session.id) ? 'none' : '';
-    document.getElementById('modal-user').classList.add('is-open');
+    openModal('modal-user');
   });
 
   document.querySelectorAll('[data-modal-open="modal-user"]').forEach(btn => {
