@@ -479,19 +479,55 @@
 
   document.getElementById('form-user')?.addEventListener('submit', async e => {
     e.preventDefault();
+    const id    = document.getElementById('fu-id').value;
     const nome  = document.getElementById('fu-nome').value.trim();
     const email = document.getElementById('fu-email').value.trim();
     const pwd   = document.getElementById('fu-pwd').value;
     const role  = document.getElementById('fu-role').value;
-    if (!nome || !email || !pwd) { alert('Todos os campos são obrigatórios.'); return; }
+    if (!nome || !email) { alert('Nome e email são obrigatórios.'); return; }
+    if (!id && !pwd) { alert('A palavra-passe é obrigatória para novos utilizadores.'); return; }
     try {
-      await api('/auth/register', { method: 'POST', body: { name: nome, email, password: pwd, role } });
+      if (id) {
+        const body = { name: nome, email, role };
+        if (pwd) body.password = pwd;
+        await api(`/auth/users/${id}`, { method: 'PUT', body });
+      } else {
+        await api('/auth/register', { method: 'POST', body: { name: nome, email, password: pwd, role } });
+      }
       closeModal('modal-user');
       await loadUsers();
-      alert('Utilizador criado com sucesso.');
     } catch (err) {
       alert('Erro: ' + err.message);
     }
+  });
+
+  document.getElementById('fu-delete-btn')?.addEventListener('click', async () => {
+    const id = document.getElementById('fu-id').value;
+    if (!id) return;
+    if (!confirm('Eliminar este utilizador? Esta acção não pode ser desfeita.')) return;
+    try {
+      await api(`/auth/users/${id}`, { method: 'DELETE' });
+      closeModal('modal-user');
+      await loadUsers();
+    } catch (err) {
+      alert('Erro: ' + err.message);
+    }
+  });
+
+  document.getElementById('users-list')?.addEventListener('click', e => {
+    const btn = e.target.closest('[data-edit-user]');
+    if (!btn) return;
+    const u = users.find(u => String(u.id) === String(btn.dataset.editUser));
+    if (!u) return;
+    document.getElementById('modal-user-title').textContent = 'Editar utilizador';
+    document.getElementById('fu-id').value    = u.id;
+    document.getElementById('fu-nome').value  = u.nome;
+    document.getElementById('fu-email').value = u.email;
+    document.getElementById('fu-pwd').value   = '';
+    document.getElementById('fu-role').value  = u.role;
+    document.getElementById('fu-pwd-label').textContent = 'Palavra-passe (deixa em branco para não alterar)';
+    document.getElementById('fu-delete-btn').style.display = String(u.id) === String(session.id) ? 'none' : '';
+    document.getElementById('modal-user').classList.add('is-open');
   });
 
   document.querySelectorAll('[data-modal-open="modal-user"]').forEach(btn => {
@@ -499,6 +535,8 @@
       document.getElementById('modal-user-title').textContent = 'Adicionar utilizador';
       ['fu-id','fu-nome','fu-email','fu-pwd'].forEach(id => document.getElementById(id) && (document.getElementById(id).value = ''));
       document.getElementById('fu-role').value = 'editor';
+      document.getElementById('fu-pwd-label').textContent = 'Palavra-passe *';
+      document.getElementById('fu-delete-btn').style.display = 'none';
     });
   });
 

@@ -333,7 +333,7 @@
 <div class="form-group"><label>Email *</label><input id="fu-email" placeholder="email@moz.pt" type="email"/></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Palavra-passe *</label><input id="fu-pwd" placeholder="Mínimo 8 caracteres" type="password"/></div>
+<div class="form-group"><label id="fu-pwd-label">Palavra-passe *</label><input id="fu-pwd" placeholder="Mínimo 8 caracteres" type="password"/></div>
 <div class="form-group">
 <label>Role / Permissão</label>
 <select id="fu-role">
@@ -344,6 +344,7 @@
 </div>
 </div>
 <div class="modal__footer">
+<button class="btn btn--danger-lt" id="fu-delete-btn" type="button" style="display:none;margin-right:auto">Eliminar</button>
 <button class="btn btn--secondary t-ink" data-modal-close="modal-user" type="button">Cancelar</button>
 <button class="btn btn--primary" type="submit">Guardar</button>
 </div>

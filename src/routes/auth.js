@@ -98,6 +98,58 @@ router.get('/users', auth, async (req, res) => {
   }
 });
 
+// ── EDITAR UTILIZADOR (admin) ─────────────────────────────────
+router.put('/users/:id', auth, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Acesso reservado a administradores.' });
+  }
+  try {
+    const { name, email, password, role } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Nome e email são obrigatórios.' });
+    }
+    if (password) {
+      const password_hash = await bcrypt.hash(password, 10);
+      await pool.query(
+        'UPDATE users SET name=$1, email=$2, password_hash=$3, role=$4 WHERE id=$5',
+        [name, email, password_hash, role, req.params.id]
+      );
+    } else {
+      await pool.query(
+        'UPDATE users SET name=$1, email=$2, role=$3 WHERE id=$4',
+        [name, email, role, req.params.id]
+      );
+    }
+    const result = await pool.query(
+      'SELECT id, name, email, role, created_at FROM users WHERE id=$1',
+      [req.params.id]
+    );
+    if (!result.rows[0]) return res.status(404).json({ error: 'Utilizador não encontrado.' });
+    res.json({ user: result.rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'Este email já está registado.' });
+    console.error('Erro ao editar utilizador:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+// ── ELIMINAR UTILIZADOR (admin) ───────────────────────────────
+router.delete('/users/:id', auth, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Acesso reservado a administradores.' });
+  }
+  if (String(req.params.id) === String(req.user.id)) {
+    return res.status(400).json({ error: 'Não podes eliminar a tua própria conta.' });
+  }
+  try {
+    await pool.query('DELETE FROM users WHERE id=$1', [req.params.id]);
+    res.json({ message: 'Utilizador eliminado.' });
+  } catch (err) {
+    console.error('Erro ao eliminar utilizador:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
 // ── DADOS DO UTILIZADOR ACTUAL ────────────────────────────────
 router.get('/me', auth, async (req, res) => {
   try {
